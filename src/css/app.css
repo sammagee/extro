@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  * {
+    @apply relative;
+  }
+
+  ::selection {
+    @apply bg-black bg-opacity-30;
+  }
+
+  .shadow-scroll {
+    background: 
+      linear-gradient(theme('colors.gray.900') 33%, rgba(0, 0, 0, 0)),
+      linear-gradient(rgba(0, 0, 0, 0), theme('colors.gray.900') 66%) 0 100%,
+      radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0)),
+      radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0)) 0 100%;
+    background-color: theme('colors.gray.900');
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+    background-size: 100% 3rem, 100% 3rem, 100% 1rem, 100% 1rem;
+  }
+}
