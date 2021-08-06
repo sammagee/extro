@@ -1,9 +1,9 @@
 import { ReactNode, useEffect, useState } from 'react'
-import { Disclosure, Transition } from '@headlessui/react'
+import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
 
 type DetailsProps = {
-  children: (({ close }: { close: Function }) => ReactNode) | ReactNode
+  children: ReactNode
   disabled?: boolean
   open?: boolean
   summary: string
@@ -22,7 +22,7 @@ export default function Details({
   return (
     <>
       <button
-        className={clsx('flex items-center justify-between w-full focus:outline-none', disabled && 'opacity-25 cursor-not-allowed')}
+        className={clsx('flex items-center justify-between w-full border-2 border-dashed border-transparent focus:outline-none -ml-0.5 -top-0.5 focus-visible:border-green-500', disabled && 'opacity-25 cursor-not-allowed')}
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
       >
