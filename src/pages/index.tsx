@@ -22,12 +22,12 @@ export default function Home() {
   const [step, setStep] = useState<Step>(Step.Backup)
   const [backupFolder, setBackupFolder] = useState<FileSystemDirectoryHandle | undefined>()
   const [loadingContacts, setLoadingContacts] = useState<boolean>(false)
-  const [loadingVoicemails, setLoadingVoicemails] = useState<boolean>(false)
+  // const [loadingVoicemails, setLoadingVoicemails] = useState<boolean>(false)
   const backupBtn = useRef<HTMLButtonElement>(null)
   const locateBtn = useRef<HTMLButtonElement>(null)
   const openBtn = useRef<HTMLButtonElement>(null)
   const conversationsBtn = useRef<HTMLButtonElement>(null)
-  const voicemailsBtn = useRef<HTMLButtonElement>(null)
+  // const voicemailsBtn = useRef<HTMLButtonElement>(null)
 
   const locate = () => {
     setStep(Step.Locate)
@@ -87,8 +87,8 @@ export default function Home() {
           <h2 className="mt-2 text-2xl font-bold text-green-200">
             Save your{' '}
             <span className="text-green-500">conversations</span>
-            {' '}and{' '}
-            <span className="text-green-500">voicemails</span>
+            {/* {' '}and{' '}
+            <span className="text-green-500">voicemails</span> */}
           </h2>
 
           <article className="mt-6 prose prose-xl text-gray-200">
@@ -201,14 +201,14 @@ export default function Home() {
                   disabled={[Step.Backup, Step.Locate, Step.Open].includes(step) || !parent}
                   open={step === Step.View}
                 >
-                  <div className="grid grid-cols-2 gap-3 mt-6">
-                    <Conversations
-                      ref={conversationsBtn}
-                      backupFolder={backupFolder}
-                      contacts={contacts}
-                      sql={sql}
-                    />
+                  <Conversations
+                    ref={conversationsBtn}
+                    backupFolder={backupFolder}
+                    contacts={contacts}
+                    sql={sql}
+                  />
 
+                  {/* <div className="grid grid-cols-2 gap-3 mt-6">
                     <Button
                       ref={voicemailsBtn}
                       disabled={loadingVoicemails}
@@ -230,7 +230,7 @@ export default function Home() {
                         </svg>
                       )}
                     </Button>
-                  </div>
+                  </div> */}
                 </Details>
               </li>
             </ol>

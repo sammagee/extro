@@ -1,6 +1,11 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Recover
+## Save your conversations
 
-## Getting Started
+This project allows you to save or view your conversations/messages from an iOS backup folder.
+You can use the app hosted at [https://recover.krafted.dev](https://recover.krafted.dev) or use the steps below
+to run it locally.
+
+## Getting Started Locally
 
 First, run the development server:
 
@@ -12,23 +17,27 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.tsx`.
+> Please note that this project uses new web technologies, such as the File System Access API.
+> As such, you may only be able to use it on modern browsers (currently only Chrome supports this technology).
+> The steps are also currently only documented to work on Mac, but a similar process may work on Windows and Linux, so long as you are using a modern iOS backup folder and a modern browser as previously noted.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Steps are included on the home page of the app. They are as follows:
 
-## Learn More
+1. Plug your iPhone into your Mac, then open Finder. You should see your iPhone&apos;s name show up
+    in Finder&apos;s sidebar. Click that name. Then click the &quot;Back Up&quot; button and wait for
+    it to finish.
 
-To learn more about Next.js, take a look at the following resources:
+2. Open Finder and press <code>⌘+shift+g</code> on your keyboard. In the box that opens, type
+    <code>~/Library/Application Support/MobileSync/Backup</code>, then press <code>enter</code>.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    You should now see a list of folders with names like <br /><code>00000000-0000000000000000</code>.
+    Locate the folder that was most recently modified. Move or copy this folder to be another folder
+    that is more easily accessible (e.g. your <code>Downloads</code> folder).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. Click the "Open Backup Folder" button and navigate to and select the folder you just moved (e.g.
+    `Downloads/00000000-0000000000000000`). As noted above, this currently only works with Google Chrome.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+4. Choose what you would like to view. We currently support viewing and downloading Messages; more features
+    will be added in the future.

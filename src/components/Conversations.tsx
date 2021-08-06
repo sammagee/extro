@@ -122,6 +122,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
     <>
       <Button
         ref={ref}
+        className="w-full mt-6"
         disabled={loading}
         loading={loading}
         onClick={load}
