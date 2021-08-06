@@ -1,14 +1,17 @@
-import { forwardRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import Button from '@/components/Button'
 import Modal from '@/components/Modal'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { Database as SqlJsDatabase, SqlJsStatic } from 'sql.js'
+import { SqlJsStatic } from 'sql.js'
 import DatabaseFactory from '@/db/DatabaseFactory'
 import ConversationRepository from '@/repositories/ConversationRepository'
 import { ContactEntries } from '@/repositories/ContactRepository'
 import { Conversation } from '@/models/Conversation'
+import { Message } from '@/models/Message'
+import MessageRepository from '@/repositories/MessageRepository'
+import clsx from 'clsx'
 
 dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
@@ -30,8 +33,6 @@ dayjs.updateLocale('en', {
   },
 })
 
-interface Message {}
-
 type ConversationsProps = {
   backupFolder?: FileSystemDirectoryHandle
   contacts?: ContactEntries
@@ -44,38 +45,92 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
   sql
 }, ref) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
   const [conversations, setConversations] = useState<Conversation[] | undefined>()
   const [selectedConversation, setSelectedConversation] = useState<Conversation | undefined>()
   const [messages, setMessages] = useState<Message[]>([])
+  const [messagesPage, setMessagesPage] = useState(0)
+  const [messagesEnd, setMessagesEnd] = useState(false)
+  const messagesContainer = useRef<HTMLDivElement>(null)
+  const messagesLoader = useRef<HTMLButtonElement>(null)
 
   const load = async() => {
     if (!sql || !backupFolder || !contacts) return
-    setIsLoading(true)
+    setLoading(true)
     const db = await DatabaseFactory.create(sql, backupFolder, 'SMS')
     const conversations = await (new ConversationRepository(db, contacts)).getAll()
     setConversations(conversations)
     setIsOpen(true)
-    setIsLoading(false)
+    setLoading(false)
   }
 
-  const downloadMessages = async() => {}
+  const loadMessages = async() => {
+    if (!sql || !backupFolder || !contacts || !selectedConversation) return
+    setLoadingMessages(true)
+    const db = await DatabaseFactory.create(sql, backupFolder, 'SMS')
+    const messages = await (await (new MessageRepository(db, contacts, selectedConversation)).getAll(messagesPage)).reverse()
+    if (!messages.length) {
+      setMessagesEnd(true)
+      return
+    }
+    setMessages(currentMessages => [...messages, ...currentMessages])
+    setLoadingMessages(false)
+  }
 
-  const resetMessages = () => {}
+  const downloadMessages = async() => {
+    const html2pdf = (await import('html2pdf.js')).default
+    html2pdf().set({
+      margin: 16,
+      pagebreak: {mode: 'avoid-all'},
+      filename: 'Messages.pdf',
+      html2canvas:  { scale: 2 },
+    }).from(document.getElementById('messages')).save();
+  }
+
+  const resetMessages = () => {
+    setMessagesEnd(false)
+    setMessagesPage(0)
+    setMessages([])
+    setSelectedConversation(undefined)
+  }
+
+  const selectConversation = async(conversation: Conversation) => {
+    setSelectedConversation(conversation)
+    await loadMessages()
+  }
+
+  useEffect(() => {
+    if (!messagesContainer.current) return
+    messagesContainer.current.scrollTop = messagesContainer.current.scrollHeight
+    const handleObserver = (entities: any) => entities[0].isIntersecting && setMessagesPage(page => page + 1)
+    const observer = new IntersectionObserver(handleObserver, {root: messagesContainer.current, rootMargin: '0px', threshold: 1})
+    messagesLoader.current && observer.observe(messagesLoader.current)
+  }, [messagesContainer.current]);
+
+  useEffect(() => {
+    const load = async() => {
+      if (!messagesContainer.current) return
+      const currentScrollHeight = messagesContainer.current.scrollHeight
+      selectedConversation && await loadMessages()
+      messagesContainer.current.scrollTop = messagesContainer.current.scrollHeight - currentScrollHeight
+    }
+    load()
+  }, [messagesPage])
 
   return (
     <>
       <Button
         ref={ref}
-        disabled={isLoading}
-        loading={isLoading}
+        disabled={loading}
+        loading={loading}
         onClick={load}
       >
         <span className="flex-shrink-0 inline-block w-5" />
 
         <span className="flex-1 mx-4 text-center">Conversations</span>
 
-        {isLoading ? (
+        {loading ? (
           <svg className="flex-shrink-0 w-5 h-5 text-green-100 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -116,7 +171,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
           ) : 'Choose a Conversation'}
         </h3>
 
-        {/* {messages.length > 0 && (
+        {messages.length > 0 && (
           <div
             id="messagesContainer"
             ref={messagesContainer}
@@ -150,29 +205,29 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
                 <div
                   className={clsx(
                     'max-w-xs flex items-end',
-                    message[1] === 1 && 'ml-auto justify-end',
-                    index > 0 && message[1] !== messages[index - 1][1] ? 'mt-2' : 'mt-px',
+                    message.fromMe === 1 && 'ml-auto justify-end',
+                    index > 0 && message.fromMe !== messages[index - 1].fromMe ? 'mt-2' : 'mt-px',
                   )}
-                  key={message[2] + index}
+                  key={message.datetime + index}
                 >
                   {((index < messages.length - 1 && index > 0
-                      && message[1] === 0
-                      && message[1] !== messages[index + 1][1]
-                      && message[1] === messages[index - 1][1]
+                      && message.fromMe === 0
+                      && message.fromMe !== messages[index + 1].fromMe
+                      && message.fromMe === messages[index - 1].fromMe
                     ) || ((index < messages.length - 1 && index > 0)
-                      && message[1] === 0
-                      && message[1] !== messages[index - 1][1]
-                      && message[1] !== messages[index + 1][1]
+                      && message.fromMe === 0
+                      && message.fromMe !== messages[index - 1].fromMe
+                      && message.fromMe !== messages[index + 1].fromMe
                     ) || ((index === 0
-                        && message[1] === 0
-                        && message[1] !== messages[index + 1][1])
+                        && message.fromMe === 0
+                        && message.fromMe !== messages[index + 1].fromMe)
                       ) || (index === messages.length - 1
-                        && message[1] === 0
-                        && message[1] !== messages[index - 1][1]))
+                        && message.fromMe === 0
+                        && message.fromMe !== messages[index - 1].fromMe))
                     && (
                     <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 text-gray-400 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full select-none group-hover:border-gray-800 group-focus:border-gray-800">
-                      {message[6] ? (
-                        <span className="text-sm font-semibold">{message[6]}</span>
+                      {message.initials ? (
+                        <span className="text-sm font-semibold">{message.initials}</span>
                       ) : (
                         <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
                           <svg className="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83 89">
@@ -186,60 +241,61 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
                   <div
                     className={clsx(
                       !((index < messages.length - 1 && index > 0
-                        && message[1] === 0
-                        && message[1] !== messages[index + 1][1]
-                        && message[1] === messages[index - 1][1]
+                        && message.fromMe === 0
+                        && message.fromMe !== messages[index + 1].fromMe
+                        && message.fromMe === messages[index - 1].fromMe
                       ) || ((index < messages.length - 1 && index > 0)
-                        && message[1] === 0
-                        && message[1] !== messages[index - 1][1]
-                        && message[1] !== messages[index + 1][1]
+                        && message.fromMe === 0
+                        && message.fromMe !== messages[index - 1].fromMe
+                        && message.fromMe !== messages[index + 1].fromMe
                       ) || ((index === 0
-                          && message[1] === 0
-                          && message[1] !== messages[index + 1][1])
+                          && message.fromMe === 0
+                          && message.fromMe !== messages[index + 1].fromMe)
                         ) || (index === messages.length - 1
-                          && message[1] === 0
-                          && message[1] !== messages[index - 1][1])) && 'ml-10',
-                      message[1] === 1 && 'text-right',
+                          && message.fromMe === 0
+                          && message.fromMe !== messages[index - 1].fromMe)) && 'ml-10',
+                      message.fromMe === 1 && 'text-right',
                     )}
                   >
-                    {((index > 0 && message[1] === 0 && message[1] !== messages[index - 1][1])
-                      || (index === 0 && message[1] === 0)) && (
+                    {((index > 0 && message.fromMe === 0 && message.fromMe !== messages[index - 1].fromMe)
+                      || (index === 0 && message.fromMe === 0)) && (
                       <span className="ml-3 text-xs text-gray-400">
-                        {message[5]}<span className="text-gray-500">{' '} &middot; {' '}{dayjs(message[2]).fromNow()}</span>
+                        {message.name}<span className="text-gray-500">{' '} &middot; {' '}{dayjs(message.datetime).fromNow()}</span>
                       </span>
                     )}
 
-                    {((index > 0 && message[1] === 1 && message[1] !== messages[index - 1][1])
-                      || (index === 0 && message[1] === 1)) && (
+                    {((index > 0 && message.fromMe === 1 && message.fromMe !== messages[index - 1].fromMe)
+                      || (index === 0 && message.fromMe === 1)) && (
                       <span className="mr-3 text-xs text-gray-400">
-                        <span className="text-gray-500">{dayjs(message[2]).fromNow()}{' '} &middot; {' '}</span>Me
+                        <span className="text-gray-500">{dayjs(message.datetime).fromNow()}{' '} &middot; {' '}</span>Me
                       </span>
                     )}
 
                     <div
                       className={clsx(
                         'py-1 px-3 rounded-2xl max-w-max',
-                        message[1] === 1 ? message[4] === 'SMS' ? 'bg-green-500 text-green-100' : 'bg-blue-500 text-blue-100' : 'bg-gray-700 text-gray-300',
-                        message[1] === 1 && 'ml-auto',
+                        message.fromMe === 1 ? message.service === 'SMS' ? 'bg-green-500 text-green-100' : 'bg-blue-500 text-blue-100' : 'bg-gray-700 text-gray-300',
+                        message.fromMe === 1 && 'ml-auto',
                       )}
                     >
-                      <p className="text-left break-word">{message[3]}</p>
+                      <p className="text-left break-word">{message.text}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        )} */}
+        )}
 
         {messages.length === 0 && (
-          <div className="flex w-full">
+          <div className="w-full">
             <div className="mt-3 overflow-y-auto sm:-ml-6 max-h-48 shadow-scroll overscroll-contain">
               {conversations?.map(conversation => (
                 <div key={conversation.id}>
                   <button
                     className="flex items-center justify-between w-full px-6 py-2 space-x-3 text-left transition-colors duration-200 ease-in-out rounded-xl focus:outline-none hover:bg-gray-800 focus:bg-gray-800 group overflow-hidden"
-                    onClick={() => setSelectedConversation(conversation)}
+                    disabled={loadingMessages}
+                    onClick={() => selectConversation(conversation)}
                   >
                     <div>
                       <span className="font-semibold">{conversation.name}</span>

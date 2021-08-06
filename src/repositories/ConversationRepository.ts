@@ -31,7 +31,7 @@ class ConversationRepository implements Repository<Conversation> {
         JOIN chat_message_join
           ON message.ROWID = chat_message_join.message_id
         JOIN chat
-            ON chat.ROWID = chat_message_join.chat_id
+          ON chat.ROWID = chat_message_join.chat_id
         ORDER BY message.date DESC
       ) AS messages
       GROUP BY messages.chat_identifier
