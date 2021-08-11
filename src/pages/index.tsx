@@ -86,7 +86,7 @@ export default function Home() {
           <h1 className="text-4xl font-black text-white">Recover</h1>
           <h2 className="mt-2 text-2xl font-bold text-green-200">
             View and save your backed up{' '}
-            <span className="text-green-500">conversations</span>
+            <span className="text-green-500">conversations</span>{' '}
             {/* {' '}and{' '}
             <span className="text-green-500">voicemails</span> */}
             without having to download a thing
