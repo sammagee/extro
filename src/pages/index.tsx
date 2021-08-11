@@ -85,10 +85,11 @@ export default function Home() {
         <div className="w-full max-w-lg mx-auto">
           <h1 className="text-4xl font-black text-white">Recover</h1>
           <h2 className="mt-2 text-2xl font-bold text-green-200">
-            Save your{' '}
+            View and save your backed up{' '}
             <span className="text-green-500">conversations</span>
             {/* {' '}and{' '}
             <span className="text-green-500">voicemails</span> */}
+            without having to download a thing
           </h2>
 
           <article className="mt-6 prose prose-xl text-gray-200">
