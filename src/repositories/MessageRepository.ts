@@ -5,7 +5,7 @@ import { ContactEntries } from './ContactRepository'
 import { Message } from '@/models/Message'
 import parseTimestamp from '@/utils/datetime'
 
-class MessageRepository implements Repository<Message> {
+class MessageRepository implements Repository<Message[]> {
   private LIMIT: number = 20
   private messages: Message[] = []
   private db: SqlJsDatabase

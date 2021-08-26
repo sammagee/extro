@@ -3,12 +3,10 @@ import { Repository } from '@/repositories/Repository'
 import { Contact } from '@/models/Contact'
 import isEmpty from 'lodash/isEmpty'
 
-export interface ContactEntries {
-  [phoneNum: string]: Contact
-}
+export type ContactEntries = Record<string, Contact>
 
 class ContactRepository implements Repository<ContactEntries> {
-  private contacts: {[phoneNum: string]: Contact} = {}
+  private contacts: ContactEntries = {}
   private db: SqlJsDatabase
 
   constructor(db: SqlJsDatabase) {

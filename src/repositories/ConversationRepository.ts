@@ -3,7 +3,7 @@ import { Repository } from '@/repositories/Repository'
 import { Conversation } from '@/models/Conversation'
 import { ContactEntries } from './ContactRepository'
 
-class ConversationRepository implements Repository<Conversation> {
+class ConversationRepository implements Repository<Conversation[]> {
   private conversations: Conversation[] = []
   private db: SqlJsDatabase
   private contacts: ContactEntries

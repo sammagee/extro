@@ -1,3 +1,3 @@
 export interface Repository<T> {
-  getAll(page?: number): Promise<T | T[]>
+  getAll(page?: number): Promise<T>
 }
