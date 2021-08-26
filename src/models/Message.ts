@@ -1,5 +1,3 @@
-import { Contact } from '@/models/Contact'
-
 export interface Message {
   id: string
   name: string

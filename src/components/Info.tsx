@@ -1,15 +1,15 @@
+import React, { ReactNode } from 'react'
 import clsx from 'clsx'
-import { ReactNode } from 'react'
 
 interface InfoProps {
   children: ReactNode
   type?: 'note' | 'tip' | 'warning' | 'error',
 }
 
-export default function Info({
+const Info = ({
   children,
   type = 'tip'
-}: InfoProps) {
+}: InfoProps) => {
   const title = {
     note: 'Note',
     tip: 'Tip',
@@ -37,3 +37,5 @@ export default function Info({
     </div>
   )
 }
+
+export default Info

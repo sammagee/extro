@@ -1,9 +1,9 @@
 import { Database as SqlJsDatabase } from 'sql.js'
-import { Repository } from '@/repositories/Repository'
-import { Conversation } from '@/models/Conversation'
+import { Conversation } from '../models/Conversation'
+import { Message } from '../models/Message'
+import parseTimestamp from '../utils/datetime'
 import { ContactEntries } from './ContactRepository'
-import { Message } from '@/models/Message'
-import parseTimestamp from '@/utils/datetime'
+import { Repository } from './Repository'
 
 class MessageRepository implements Repository<Message[]> {
   private LIMIT: number = 20

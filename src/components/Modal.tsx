@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from 'react'
+import React, { Fragment, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 interface ModalProps {
@@ -10,14 +10,14 @@ interface ModalProps {
   title: string
 }
 
-export default function Modal({
+const Modal = ({
   actions,
   children,
   icon,
   isOpen,
   setIsOpen,
   title
-}: ModalProps) {
+}: ModalProps) => {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog
@@ -83,3 +83,5 @@ export default function Modal({
     </Transition>
   )
 }
+
+export default Modal

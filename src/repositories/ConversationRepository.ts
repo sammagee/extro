@@ -1,7 +1,7 @@
 import { Database as SqlJsDatabase } from 'sql.js'
-import { Repository } from '@/repositories/Repository'
-import { Conversation } from '@/models/Conversation'
+import { Conversation } from '../models/Conversation'
 import { ContactEntries } from './ContactRepository'
+import { Repository } from './Repository'
 
 class ConversationRepository implements Repository<Conversation[]> {
   private conversations: Conversation[] = []

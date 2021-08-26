@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
 
@@ -9,12 +9,12 @@ interface DetailsProps {
   summary: string
 }
 
-export default function Details({
+const Details = ({
   children,
   disabled,
   open = false,
   summary,
-}: DetailsProps) {
+}: DetailsProps) => {
   const [isOpen, setIsOpen] = useState(open)
 
   useEffect(() => setIsOpen(open), [open])
@@ -47,3 +47,5 @@ export default function Details({
     </>
   )
 }
+
+export default Details

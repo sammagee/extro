@@ -1,5 +1,5 @@
 import { Database as SqlJsDatabase, SqlJsStatic } from 'sql.js'
-import Database from '@/db/Database'
+import Database from './Database'
 
 class DatabaseFactory {
   private constructor() {}

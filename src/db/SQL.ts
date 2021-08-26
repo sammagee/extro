@@ -7,7 +7,7 @@ class SQL {
 
   public static async getInstance(): Promise<SqlJsStatic> {
     if (!SQL.instance) {
-      SQL.instance = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' })
+      SQL.instance = await initSqlJs({ locateFile: file => `https://sql.js.org/dist/${file}` })
     }
 
     return SQL.instance

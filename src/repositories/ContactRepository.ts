@@ -1,7 +1,7 @@
 import { Database as SqlJsDatabase } from 'sql.js'
-import { Repository } from '@/repositories/Repository'
-import { Contact } from '@/models/Contact'
 import isEmpty from 'lodash/isEmpty'
+import { Contact } from '../models/Contact'
+import { Repository } from './Repository'
 
 export type ContactEntries = Record<string, Contact>
 
