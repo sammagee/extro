@@ -33,7 +33,7 @@ dayjs.updateLocale('en', {
   },
 })
 
-type ConversationsProps = {
+interface ConversationsProps {
   backupFolder?: FileSystemDirectoryHandle
   contacts?: ContactEntries
   sql?: SqlJsStatic

@@ -1,7 +1,7 @@
 import { Fragment, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-type ModalProps = {
+interface ModalProps {
   actions?: ReactNode
   children: ReactNode
   icon?: ReactNode

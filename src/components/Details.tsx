@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import clsx from 'clsx'
 
-type DetailsProps = {
+interface DetailsProps {
   children: ReactNode
   disabled?: boolean
   open?: boolean

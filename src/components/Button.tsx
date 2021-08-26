@@ -1,7 +1,7 @@
 import { ReactNode, forwardRef, MouseEvent } from 'react'
 import clsx from 'clsx'
 
-type ButtonProps = {
+interface ButtonProps {
   children: ReactNode
   className?: string
   disabled?: boolean

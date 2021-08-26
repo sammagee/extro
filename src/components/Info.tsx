@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ReactNode } from 'react'
 
-type InfoProps = {
+interface InfoProps {
   children: ReactNode
   type?: 'note' | 'tip' | 'warning' | 'error',
 }
