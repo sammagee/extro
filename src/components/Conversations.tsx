@@ -5,13 +5,13 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import { SqlJsStatic } from 'sql.js'
 import clsx from 'clsx'
 import { ContactEntries } from '../repositories/ContactRepository'
-import { Conversation } from '../models/Conversation'
-import { Message } from '../models/Message'
 import DatabaseFactory from '../db/DatabaseFactory'
 import ConversationRepository from '../repositories/ConversationRepository'
 import MessageRepository from '../repositories/MessageRepository'
 import Button from './Button'
 import Modal from './Modal'
+import Conversation from '../models/Conversation'
+import Message from '../models/Message'
 
 dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
@@ -153,7 +153,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
         icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Messages"
+        title="Conversations"
       >
         <h3 className="text-sm font-semibold text-gray-500">
           {messages.length > 0 ? (
@@ -193,7 +193,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                   </svg>
                 ) : (
-                  <svg className="w-4 h-4 text-gray-500 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
@@ -231,7 +231,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
                         <span className="text-sm font-semibold">{message.initials}</span>
                       ) : (
                         <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
-                          <svg className="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83 89">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 83 89">
                             <path d="M41.864 43.258c10.45 0 19.532-9.375 19.532-21.582C61.396 9.616 52.314.68 41.864.68c-10.449 0-19.53 9.13-19.53 21.093 0 12.11 9.032 21.485 19.53 21.485zM11.152 88.473H72.48c7.715 0 10.449-2.198 10.449-6.495 0-12.597-15.772-29.98-41.113-29.98C16.523 51.998.75 69.381.75 81.978c0 4.297 2.735 6.495 10.4 6.495z" />
                           </svg>
                         </span>
@@ -309,7 +309,7 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
                           <span className="text-base font-semibold">{conversation.initials}</span>
                         ) : (
                           <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
-                            <svg className="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83 89">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 83 89">
                               <path d="M41.864 43.258c10.45 0 19.532-9.375 19.532-21.582C61.396 9.616 52.314.68 41.864.68c-10.449 0-19.53 9.13-19.53 21.093 0 12.11 9.032 21.485 19.53 21.485zM11.152 88.473H72.48c7.715 0 10.449-2.198 10.449-6.495 0-12.597-15.772-29.98-41.113-29.98C16.523 51.998.75 69.381.75 81.978c0 4.297 2.735 6.495 10.4 6.495z" />
                             </svg>
                           </span>
@@ -327,6 +327,6 @@ const Conversations = forwardRef<HTMLButtonElement, ConversationsProps>(({
   )
 })
 
-Conversations.displayName = 'Conversations';
+Conversations.displayName = 'Conversations'
 
 export default Conversations

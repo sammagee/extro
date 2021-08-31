@@ -1,5 +1,5 @@
 import { Database as SqlJsDatabase } from 'sql.js'
-import { Conversation } from '../models/Conversation'
+import Conversation from '../models/Conversation'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
 
@@ -46,14 +46,15 @@ class ConversationRepository implements Repository<Conversation[]> {
           ? contact.lastName ? `${contact.firstName} ${contact.lastName}` : contact.firstName
           : conversation[0])?.toString() || ''
         const initials = name?.replace(/[^a-zA-Z\s]/g, '').match(/\b\w/g)?.join('').toUpperCase() || ''
-        return {
-          id: conversation[0]?.toString() || '',
-          fromMe: Boolean(conversation[1]),
-          date: conversation[2]?.toString() || '',
-          text: conversation[3]?.toString() || '',
+
+        return new Conversation(
+          conversation[0]?.toString() || '',
           name,
-          initials
-        } as Conversation
+          conversation[2]?.toString() || '',
+          Boolean(conversation[1]),
+          initials,
+          conversation[3]?.toString() || '',
+         )
       })
     )
 

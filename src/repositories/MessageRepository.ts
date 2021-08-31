@@ -1,6 +1,6 @@
 import { Database as SqlJsDatabase } from 'sql.js'
-import { Conversation } from '../models/Conversation'
-import { Message } from '../models/Message'
+import Conversation from '../models/Conversation'
+import Message, { MessageFromMe, MessageService } from '../models/Message'
 import parseTimestamp from '../utils/datetime'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
@@ -18,7 +18,7 @@ class MessageRepository implements Repository<Message[]> {
     this.conversation = conversation
   }
 
-  public async getAll(page: number): Promise<Message[]> {
+  public async getAll(page: number = 0): Promise<Message[]> {
     const query = `
       SELECT
         chat.chat_identifier,
@@ -37,6 +37,8 @@ class MessageRepository implements Repository<Message[]> {
     `
     const messagesTemp = this.db.exec(query)?.[0]?.values
 
+    if (!messagesTemp) return this.messages
+
     this.messages = await Promise.all(
       messagesTemp.map(async(message) => {
         const contact = this.contacts[(message[0] as string)]
@@ -44,15 +46,16 @@ class MessageRepository implements Repository<Message[]> {
           ? contact.lastName ? `${contact.firstName} ${contact.lastName}` : contact.firstName
           : message[0])?.toString() || ''
         const initials = name?.replace(/[^a-zA-Z\s]/g, '').match(/\b\w/g)?.join('').toUpperCase() || ''
-        return {
-          id: message[0]?.toString() || '',
-          fromMe: parseInt(message[1]?.toString() || '0'),
-          datetime: message[2]?.toString() || '',
-          text: message[3]?.toString() || '',
-          service: message[4]?.toString() || '',
+
+        return new Message(
+          message[0]?.toString() || '',
           name,
-          initials
-        } as Message
+          message[2]?.toString() || '',
+          parseInt(message[1]?.toString() || '0') as MessageFromMe,
+          initials,
+          (message[4]?.toString() || 'SMS') as MessageService,
+          message[3]?.toString() || '',
+        )
       })
     )
 

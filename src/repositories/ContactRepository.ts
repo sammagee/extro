@@ -1,6 +1,6 @@
 import { Database as SqlJsDatabase } from 'sql.js'
 import isEmpty from 'lodash/isEmpty'
-import { Contact } from '../models/Contact'
+import Contact from '../models/Contact'
 import { Repository } from './Repository'
 
 export type ContactEntries = Record<string, Contact>
@@ -28,12 +28,12 @@ class ContactRepository implements Repository<ContactEntries> {
     results.forEach(result => {
       if (result[0]) {
         const phoneNums = result?.[0].toString().trim().split(/(?<!\))\s+/)
-        phoneNums.forEach(phoneNum => {
-          this.contacts[phoneNum] = {
-            firstName: result?.[1]?.toString(),
-            lastName: result?.[2]?.toString(),
-          }
-        })
+        phoneNums.forEach(phoneNum => 
+          this.contacts[phoneNum] = new Contact(
+            result?.[1]?.toString() || '',
+            result?.[2]?.toString() || ''
+          )
+        )
       }
     })
 
