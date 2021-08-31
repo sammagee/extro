@@ -1,7 +1,7 @@
-# Recover
-## Save your conversations
+# Extro
+## View and save your backed up conversations and voicemails without having to download a thing
 
-This project allows you to save or view your conversations/messages from an iOS backup folder.
+This project allows you to save or view your conversations/messages and voicemails from an iOS backup folder.
 You can use the app hosted at [extro.app](https://extro.app) or use the steps below
 to run it locally.
 
