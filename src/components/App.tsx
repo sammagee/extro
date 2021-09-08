@@ -41,7 +41,7 @@ const App = () => {
       if (!locateBtn.current) return
       scrollTo(locateBtn.current)
       locateBtn.current.focus()
-    }, 10)
+    }, 100)
   }
 
   const open = () => {
@@ -50,7 +50,7 @@ const App = () => {
       if (!openBtn.current) return
       scrollTo(openBtn.current)
       openBtn.current.focus()
-    }, 10)
+    }, 100)
   }
 
   const view = async () => {
@@ -60,7 +60,7 @@ const App = () => {
       if (!conversationsBtn.current) return
       scrollTo(conversationsBtn.current)
       conversationsBtn.current.focus()
-    }, 10)
+    }, 100)
   }
 
   const showDirectoryPicker = async () => {
