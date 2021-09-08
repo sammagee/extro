@@ -1,5 +1,5 @@
-import React, { Fragment, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import React, { Fragment, ReactNode } from 'react'
 
 interface ModalProps {
   actions?: ReactNode
@@ -16,12 +16,12 @@ const Modal = ({
   icon,
   isOpen,
   setIsOpen,
-  title
+  title,
 }: ModalProps) => {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog
-        className="fixed inset-0 w-full z-30 flex items-end sm:items-center justify-center min-h-screen p-4 text-center"
+        className="fixed inset-0 z-30 flex items-end justify-center w-full min-h-screen p-4 text-center sm:items-center"
         onClose={() => setIsOpen(false)}
       >
         <Transition.Child
@@ -51,7 +51,15 @@ const Modal = ({
                 {icon && (
                   <div className="hidden sm:block">
                     <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-gray-800 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-                      <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        className="w-6 h-6 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         {icon}
                       </svg>
                     </div>
@@ -65,9 +73,7 @@ const Modal = ({
                     </Dialog.Title>
                   </header>
 
-                  <div className="mt-3 text-gray-400">
-                    {children}
-                  </div>
+                  <div className="mt-3 text-gray-400">{children}</div>
                 </div>
               </div>
             </div>

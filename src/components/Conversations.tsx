@@ -11,6 +11,7 @@ import ContactsContext from '../contexts/ContactsContext'
 import DatabaseFactory from '../db/DatabaseFactory'
 import Conversation from '../models/Conversation'
 import ConversationRepository from '../repositories/ConversationRepository'
+import { downloadHtml } from '../utils/html'
 import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 import Messages from './Messages'
@@ -58,16 +59,8 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
   }
 
   const downloadMessages = async () => {
-    const html2pdf = (await import('html2pdf.js')).default
-    html2pdf()
-      .set({
-        margin: 16,
-        pagebreak: { mode: 'avoid-all' },
-        filename: 'Messages.pdf',
-        html2canvas: { scale: 2 },
-      })
-      .from(document.getElementById('messages'))
-      .save()
+    if (!selectedConversation) return
+    downloadHtml(`Conversation_${selectedConversation.name}`, 'messages')
   }
 
   const resetMessages = () => {

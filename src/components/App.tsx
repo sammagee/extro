@@ -7,6 +7,7 @@ import SQL from '../db/SQL'
 import ContactRepository, {
   ContactEntries,
 } from '../repositories/ContactRepository'
+import { scrollTo } from '../utils/scroll'
 import Button from './Button'
 import Conversations from './Conversations'
 import Details from './Details'
@@ -36,17 +37,30 @@ const App = () => {
 
   const locate = () => {
     setStep(Step.Locate)
-    setTimeout(() => locateBtn.current?.focus(), 0)
+    setTimeout(() => {
+      if (!locateBtn.current) return
+      scrollTo(locateBtn.current)
+      locateBtn.current.focus()
+    }, 10)
   }
 
   const open = () => {
     setStep(Step.Open)
-    setTimeout(() => openBtn.current?.focus(), 0)
+    setTimeout(() => {
+      if (!openBtn.current) return
+      scrollTo(openBtn.current)
+      openBtn.current.focus()
+    }, 10)
   }
 
   const view = async () => {
     await showDirectoryPicker()
-    setTimeout(() => conversationsBtn.current?.focus(), 0)
+    setStep(Step.View)
+    setTimeout(() => {
+      if (!conversationsBtn.current) return
+      scrollTo(conversationsBtn.current)
+      conversationsBtn.current.focus()
+    }, 10)
   }
 
   const showDirectoryPicker = async () => {

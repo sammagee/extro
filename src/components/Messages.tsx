@@ -9,6 +9,7 @@ import Message from '../models/Message'
 import { ContactEntries } from '../repositories/ContactRepository'
 import MessageRepository from '../repositories/MessageRepository'
 import LoadingIndicator from './LoadingIndicator'
+import Tooltip from './Tooltip'
 
 interface MessagesProps {
   conversation?: Conversation
@@ -210,7 +211,10 @@ const Messages = ({ conversation }: MessagesProps) => {
                       {message.name}
                       <span className="text-gray-500">
                         {' '}
-                        &middot; {dayjs(message.datetime).fromNow()}
+                        &middot;{' '}
+                        <Tooltip content={message.datetime} placement="right">
+                          <span>{dayjs(message.datetime).fromNow()}</span>
+                        </Tooltip>
                       </span>
                     </span>
                   )}
@@ -221,7 +225,10 @@ const Messages = ({ conversation }: MessagesProps) => {
                     (index === 0 && message.fromMe)) && (
                     <span className="mr-3 text-xs text-gray-400">
                       <span className="text-gray-500">
-                        {dayjs(message.datetime).fromNow()} &middot;{' '}
+                        <Tooltip content={message.datetime} placement="left">
+                          <span>{dayjs(message.datetime).fromNow()}</span>
+                        </Tooltip>{' '}
+                        &middot;{' '}
                       </span>
                       Me
                     </span>
