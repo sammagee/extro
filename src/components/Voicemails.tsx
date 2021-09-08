@@ -1,95 +1,80 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import updateLocale from 'dayjs/plugin/updateLocale'
-import { SqlJsStatic } from 'sql.js'
-import { ContactEntries } from '../repositories/ContactRepository'
-import DatabaseFactory from '../db/DatabaseFactory'
-import VoicemailRepository from '../repositories/VoicemailRepository'
-import Button from './Button'
-import Modal from './Modal'
-import RadialProgress from './RadialProgress'
-import Voicemail from '../models/Voicemail'
-import Tooltip from './Tooltip'
-import { filehash } from '../utils/file'
 import BenzAMRRecorder from 'benz-amr-recorder'
 import clsx from 'clsx'
-
-dayjs.extend(duration)
-dayjs.extend(relativeTime)
-dayjs.extend(updateLocale)
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: 'in %s',
-    past: '%s ago',
-    s: '%ds',
-    m: '1min',
-    mm: '%dmin',
-    h: '1hr',
-    hh: '%dhr',
-    d: '1d',
-    dd: '%dd',
-    M: '1mo',
-    MM: '%dmo',
-    y: '1y',
-    yy: '%dy',
-  },
-})
-
-interface VoicemailsProps {
-  backupFolder?: FileSystemDirectoryHandle
-  contacts?: ContactEntries
-  sql?: SqlJsStatic
-}
+import dayjs from 'dayjs'
+import React, {
+  forwardRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import BackupContext, { IBackupContext } from '../contexts/BackupContext'
+import ContactsContext from '../contexts/ContactsContext'
+import DatabaseFactory from '../db/DatabaseFactory'
+import Voicemail from '../models/Voicemail'
+import { ContactEntries } from '../repositories/ContactRepository'
+import VoicemailRepository from '../repositories/VoicemailRepository'
+import { filehash } from '../utils/file'
+import Button from './Button'
+import LoadingIndicator from './LoadingIndicator'
+import Modal from './Modal'
+import RadialProgress from './RadialProgress'
+import Tooltip from './Tooltip'
 
 let amr: BenzAMRRecorder
 
-const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
-  backupFolder,
-  contacts,
-  sql
-}, ref) => {
+const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
+  const { sql, backupFolder } = useContext<IBackupContext>(BackupContext)
+  const contacts = useContext<ContactEntries | null>(ContactsContext)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [loadingVoicemails, setLoadingVoicemails] = useState<boolean>(false)
   const [voicemails, setVoicemails] = useState<Voicemail[]>([])
-  const [currentVoicemail, setCurrentVoicemail] = useState<string|undefined>()
-  const [currentVoicemailProgress, setCurrentVoicemailProgress] = useState<number|undefined>()
+  const [currentVoicemail, setCurrentVoicemail] = useState<string | undefined>()
+  const [currentVoicemailProgress, setCurrentVoicemailProgress] = useState<
+    number | undefined
+  >()
+  const [loadingPage, setLoadingPage] = useState<boolean>(false)
   const [page, setPage] = useState<number>(0)
   const [end, setEnd] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)
   const loader = useRef<HTMLButtonElement>(null)
 
-  const load = async() => {
+  const load = async () => {
     if (!sql || !backupFolder || !contacts) return
-    setLoadingVoicemails(true)
+    setLoadingPage(true)
     const db = await DatabaseFactory.create(sql, backupFolder, 'Voicemails')
-    const newVoicemails = await (new VoicemailRepository(db, contacts)).getAll(page)
+    const newVoicemails = await new VoicemailRepository(db, contacts).getAll(
+      page
+    )
     if (!newVoicemails.length) {
       setEnd(true)
       return
     }
-    setVoicemails(currentVoicemails => [...currentVoicemails, ...newVoicemails])
-    setLoadingVoicemails(false)
+    setVoicemails((currentVoicemails) => [
+      ...currentVoicemails,
+      ...newVoicemails,
+    ])
+    setLoadingPage(false)
   }
 
-  const open = async() => {
+  const open = async () => {
     setLoading(true)
     await load()
     setIsOpen(true)
     setLoading(false)
   }
 
-  const getFile = async(id: string) => {
+  const getFile = async (id: string) => {
     const location = filehash(`Library/Voicemail/${id}.amr`)
-    const dirHandle = await backupFolder?.getDirectoryHandle(location.slice(0, 2))
+    const dirHandle = await backupFolder?.getDirectoryHandle(
+      location.slice(0, 2)
+    )
     const fileHandle = await dirHandle?.getFileHandle(location)
 
     return await fileHandle?.getFile()
   }
 
-  const play = async(id: string) => {
+  const play = async (id: string) => {
     if (amr) amr.stop()
 
     const file = await getFile(id)
@@ -110,7 +95,7 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
     amr.stop()
   }
 
-  const download = async(id: string, datetime: string, name: string) => {
+  const download = async (id: string, datetime: string, name: string) => {
     const file = await getFile(id)
 
     if (amr) amr.stop()
@@ -120,20 +105,23 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
     if (file) {
       await amr.initWithBlob(file)
 
-      const link = document.createElement("a");
+      const link = document.createElement('a')
 
-      link.href = window.URL.createObjectURL(amr.getBlob());
-      link.download = `${dayjs(datetime).format('YYYYMMDDHHmmss')}_${name.toLowerCase().split(' ').join('_')}.amr`;
+      link.href = window.URL.createObjectURL(amr.getBlob())
+      link.download = `${dayjs(datetime).format('YYYYMMDDHHmmss')}_${name
+        .toLowerCase()
+        .split(' ')
+        .join('_')}.amr`
 
-      document.body.appendChild(link);
+      document.body.appendChild(link)
 
       link.dispatchEvent(
         new MouseEvent('click', {
           bubbles: true,
           cancelable: true,
-          view: window
+          view: window,
         })
-      );
+      )
 
       document.body.removeChild(link)
     }
@@ -143,7 +131,9 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
     const interval = setInterval(() => {
       if (!amr?.getDuration() || !amr?.getCurrentPosition()) return
 
-      setCurrentVoicemailProgress(amr.getCurrentPosition() / amr.getDuration() * 100)
+      setCurrentVoicemailProgress(
+        (amr.getCurrentPosition() / amr.getDuration()) * 100
+      )
     }, 1000)
 
     return () => clearInterval(interval)
@@ -151,13 +141,18 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
 
   useEffect(() => {
     if (!container.current) return
-    const handleObserver = (entries: IntersectionObserverEntry[]) => entries[0].isIntersecting && setPage(page => page + 1)
-    const observer = new IntersectionObserver(handleObserver, {root: container.current, rootMargin: '0px', threshold: 1})
+    const handleObserver = (entries: IntersectionObserverEntry[]) =>
+      entries[0].isIntersecting && setPage((page) => page + 1)
+    const observer = new IntersectionObserver(handleObserver, {
+      root: container.current,
+      rootMargin: '0px',
+      threshold: 1,
+    })
     loader.current && observer.observe(loader.current)
   }, [container.current])
 
   useEffect(() => {
-    const loadVoicemails = async() => {
+    const loadVoicemails = async () => {
       if (!isOpen) return
       await load()
     }
@@ -178,20 +173,42 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
         <span className="flex-1 mx-4 text-center">Voicemails</span>
 
         {loading ? (
-          <svg className="flex-shrink-0 w-5 h-5 text-green-100 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
+          <LoadingIndicator color="text-green-100" />
         ) : (
-          <svg className="flex-shrink-0 w-5 h-5 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          <svg
+            className="flex-shrink-0 w-5 h-5 opacity-75"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+            />
           </svg>
         )}
       </Button>
 
       <Modal
-        actions={<Button offsetClass="focus:ring-offset-gray-800" variant="secondary" onClick={() => setIsOpen(false)}>Close</Button>}
-        icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />}
+        actions={
+          <Button
+            offsetClass="focus:ring-offset-gray-800"
+            variant="secondary"
+            onClick={() => setIsOpen(false)}
+          >
+            Close
+          </Button>
+        }
+        icon={
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+          />
+        }
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         title="Voicemails"
@@ -203,17 +220,23 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
               ref={container}
               className="mt-3 overflow-y-auto sm:-ml-6 max-h-48 shadow-scroll overscroll-contain"
             >
-              {voicemails.map(voicemail => (
+              {voicemails.map((voicemail) => (
                 <div key={voicemail.id}>
-                  <div className="flex items-center justify-between w-full px-6 py-2 space-x-3 text-left group overflow-hidden">
+                  <div className="flex items-center justify-between w-full px-6 py-2 space-x-3 overflow-hidden text-left group">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center flex-shrink-0 -space-x-6">
                         <div className="flex items-center justify-center w-12 h-12 bg-gray-700 border-4 border-gray-900 rounded-full select-none">
                           {voicemail.initials ? (
-                            <span className="text-base font-semibold">{voicemail.initials}</span>
+                            <span className="text-base font-semibold">
+                              {voicemail.initials}
+                            </span>
                           ) : (
                             <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
-                              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 83 89">
+                              <svg
+                                className="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 83 89"
+                              >
                                 <path d="M41.864 43.258c10.45 0 19.532-9.375 19.532-21.582C61.396 9.616 52.314.68 41.864.68c-10.449 0-19.53 9.13-19.53 21.093 0 12.11 9.032 21.485 19.53 21.485zM11.152 88.473H72.48c7.715 0 10.449-2.198 10.449-6.495 0-12.597-15.772-29.98-41.113-29.98C16.523 51.998.75 69.381.75 81.978c0 4.297 2.735 6.495 10.4 6.495z" />
                               </svg>
                             </span>
@@ -222,28 +245,28 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
                       </div>
 
                       <div>
-                        <span className="block font-semibold">{voicemail.name}</span>
-                        <div className="flex items-center text-gray-500 space-x-1">
+                        <span className="block font-semibold">
+                          {voicemail.name}
+                        </span>
+                        <div className="flex items-center space-x-1 text-gray-500">
                           <Tooltip
                             content={
                               voicemail.getDuration('m') !== '0'
-                              ? voicemail.getDuration('m [minutes], s [seconds]')
-                              : voicemail.getDuration('s [seconds]')
+                                ? voicemail.getDuration(
+                                    'm [minutes], s [seconds]'
+                                  )
+                                : voicemail.getDuration('s [seconds]')
                             }
                             placement="right"
                           >
-                            <time>
-                              {voicemail.getDuration()}
-                            </time>
+                            <time>{voicemail.getDuration()}</time>
                           </Tooltip>
                           <span>&middot;</span>
                           <Tooltip
                             content={voicemail.datetime}
                             placement="right"
                           >
-                            <span>
-                              {dayjs(voicemail.datetime).fromNow()}
-                            </span>
+                            <span>{dayjs(voicemail.datetime).fromNow()}</span>
                           </Tooltip>
                           {voicemail.trashed && (
                             <>
@@ -252,8 +275,18 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
                                 content="This voicemail was deleted"
                                 placement="right"
                               >
-                                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
                                 </svg>
                               </Tooltip>
                             </>
@@ -276,8 +309,16 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
                             progress={currentVoicemailProgress || 0}
                           />
 
-                          <svg className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
+                          <svg
+                            className="w-5 h-5 text-gray-500"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         </button>
                       ) : (
@@ -285,18 +326,40 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
                           className="flex items-center justify-center w-10 h-10 transition-colors duration-200 ease-in-out bg-gray-800 rounded-full select-none hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:ring-gray-700 focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-800"
                           onClick={() => play(voicemail.id)}
                         >
-                          <svg className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                          <svg
+                            className="w-5 h-5 text-gray-500"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         </button>
                       )}
 
                       <button
                         className="flex items-center justify-center w-10 h-10 transition-colors duration-200 ease-in-out bg-gray-800 rounded-full select-none hover:bg-gray-700 focus:bg-gray-700 focus:ring-2 focus:ring-gray-700 focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-800"
-                        onClick={() => download(voicemail.id, voicemail.datetime, voicemail.name)}
+                        onClick={() =>
+                          download(
+                            voicemail.id,
+                            voicemail.datetime,
+                            voicemail.name
+                          )
+                        }
                       >
-                        <svg className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                        <svg
+                          className="w-5 h-5 text-gray-500"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -309,23 +372,36 @@ const Voicemails = forwardRef<HTMLButtonElement, VoicemailsProps>(({
                   ref={loader}
                   className={clsx(
                     'select-none flex items-center justify-center w-10 h-10 mx-auto mt-3 transition-colors duration-200 ease-in-out bg-gray-800 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-gray-900 focus:ring-offset-2 focus:bg-gray-700',
-                    loadingVoicemails ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700',
+                    loadingPage
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-gray-700'
                   )}
-                  disabled={loadingVoicemails}
-                  onClick={() => setPage(page => page + 1)}
+                  disabled={loadingPage}
+                  onClick={() => setPage((page) => page + 1)}
                 >
-                  {!loadingVoicemails ? (
-                    <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  {!loadingPage ? (
+                    <svg
+                      className="w-4 h-4 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-gray-500 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
+                    <LoadingIndicator size="w-4 h-4" />
                   )}
                 </button>
-              ) : <p className="py-4 mx-auto text-xs text-center text-gray-600">End of Voicemails</p>}
+              ) : (
+                <p className="py-4 mx-auto text-xs text-center text-gray-600">
+                  End of Voicemails
+                </p>
+              )}
             </div>
           </div>
         )}

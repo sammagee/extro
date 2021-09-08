@@ -1,11 +1,10 @@
-export type MessageFromMe = 0 | 1
 export type MessageService = 'iMessage' | 'SMS'
 
 export interface IMessage {
   id: string
   name: string
   datetime: string
-  fromMe: MessageFromMe
+  fromMe: boolean
   initials: string
   service: MessageService
   text: string
@@ -15,7 +14,7 @@ export default class Message implements IMessage {
   public id: string
   public name: string
   public datetime: string
-  public fromMe: MessageFromMe
+  public fromMe: boolean
   public initials: string
   public service: MessageService
   public text: string
@@ -24,7 +23,7 @@ export default class Message implements IMessage {
     id: string,
     name: string,
     datetime: string,
-    fromMe: MessageFromMe,
+    fromMe: boolean,
     initials: string,
     service: MessageService,
     text: string

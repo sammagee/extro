@@ -2,9 +2,9 @@ import { Database as SqlJsDatabase } from 'sql.js'
 import Voicemail from '../models/Voicemail'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
+import Data from '../config/data'
 
 class VoicemailRepository implements Repository<Voicemail[]> {
-  private LIMIT: number = 20
   private voicemails: Voicemail[] = []
   private db: SqlJsDatabase
   private contacts: ContactEntries
@@ -24,7 +24,7 @@ class VoicemailRepository implements Repository<Voicemail[]> {
         trashed_date
       FROM voicemail
       ORDER BY date DESC
-      LIMIT ${this.LIMIT} OFFSET ${this.LIMIT * page}
+      LIMIT ${Data.limit} OFFSET ${Data.limit * page}
     `
     const voicemailsTemp = this.db.exec(query)?.[0]?.values
 

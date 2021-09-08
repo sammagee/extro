@@ -2,6 +2,7 @@ import { Database as SqlJsDatabase } from 'sql.js'
 import Conversation from '../models/Conversation'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
+import Data from '../config/data'
 
 class ConversationRepository implements Repository<Conversation[]> {
   private conversations: Conversation[] = []
@@ -13,7 +14,7 @@ class ConversationRepository implements Repository<Conversation[]> {
     this.contacts = contacts
   }
 
-  public async getAll(): Promise<Conversation[]> {
+  public async getAll(page: number = 0): Promise<Conversation[]> {
     const query = `
       SELECT
         messages.chat_identifier,
@@ -36,6 +37,7 @@ class ConversationRepository implements Repository<Conversation[]> {
       ) AS messages
       GROUP BY messages.chat_identifier
       ORDER BY messages.date DESC
+      LIMIT ${Data.limit} OFFSET ${Data.limit * page}
     `
     const conversationsTemp = this.db.exec(query)?.[0]?.values
 

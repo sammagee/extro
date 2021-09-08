@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
+import './config/dayjs'
 import './css/main.css'
 
 ReactDOM.render(

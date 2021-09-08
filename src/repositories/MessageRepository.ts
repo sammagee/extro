@@ -1,12 +1,12 @@
 import { Database as SqlJsDatabase } from 'sql.js'
 import Conversation from '../models/Conversation'
-import Message, { MessageFromMe, MessageService } from '../models/Message'
+import Message, { MessageService } from '../models/Message'
 import parseTimestamp from '../utils/datetime'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
+import Data from '../config/data'
 
 class MessageRepository implements Repository<Message[]> {
-  private LIMIT: number = 20
   private messages: Message[] = []
   private db: SqlJsDatabase
   private contacts: ContactEntries
@@ -33,7 +33,7 @@ class MessageRepository implements Repository<Message[]> {
         ON chat.ROWID = chat_message_join.chat_id
       WHERE chat.chat_identifier = '${this.conversation.id}'
       ORDER BY message.date DESC
-      LIMIT ${this.LIMIT} OFFSET ${this.LIMIT * page}
+      LIMIT ${Data.limit} OFFSET ${Data.limit * page}
     `
     const messagesTemp = this.db.exec(query)?.[0]?.values
 
@@ -51,7 +51,7 @@ class MessageRepository implements Repository<Message[]> {
           message[0]?.toString() || '',
           name,
           message[2]?.toString() || '',
-          parseInt(message[1]?.toString() || '0') as MessageFromMe,
+          Boolean(parseInt(message[1]?.toString() || '0')),
           initials,
           (message[4]?.toString() || 'SMS') as MessageService,
           message[3]?.toString() || '',
