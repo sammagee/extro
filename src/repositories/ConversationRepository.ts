@@ -1,8 +1,9 @@
 import { Database as SqlJsDatabase } from 'sql.js'
+import Data from '../config/data'
+import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
-import Data from '../config/data'
 
 class ConversationRepository implements Repository<Conversation[]> {
   private conversations: Conversation[] = []
@@ -18,13 +19,19 @@ class ConversationRepository implements Repository<Conversation[]> {
     const query = `
       SELECT
         messages.chat_identifier,
-        messages.is_from_me,
+        messages.handles,
         messages.date,
+        messages.is_from_me,
         messages.text
       FROM (
         SELECT
           chat.chat_identifier,
-          message.ROWID,
+          (SELECT GROUP_CONCAT(id)
+            FROM handle
+            JOIN chat_handle_join
+              ON chat_handle_join.chat_id = chat.ROWID
+            WHERE handle.ROWID = chat_handle_join.handle_id
+          ) AS handles,
           message.is_from_me,
           message.date,
           message.text
@@ -42,21 +49,31 @@ class ConversationRepository implements Repository<Conversation[]> {
     const conversationsTemp = this.db.exec(query)?.[0]?.values
 
     this.conversations = await Promise.all(
-      conversationsTemp.map(async(conversation) => {
-        const contact = this.contacts[(conversation[0] as string)]
-        const name = (contact && contact.firstName
-          ? contact.lastName ? `${contact.firstName} ${contact.lastName}` : contact.firstName
-          : conversation[0])?.toString() || ''
-        const initials = name?.replace(/[^a-zA-Z\s]/g, '').match(/\b\w/g)?.join('').toUpperCase() || ''
+      conversationsTemp.map(async (conversation) => {
+        const handles = (conversation[1] as string).split(',')
+        const contacts = handles.map(
+          (handle) => this.contacts[handle] || handle
+        )
+        const contactNames = contacts.map((contact) =>
+          contact instanceof Contact
+            ? `${contact.firstName} ${contact.lastName}`.trim()
+            : contact
+        )
+        const displayName =
+          contactNames.length > 1
+            ? `${contactNames.slice(0, -1).join(', ')} & ${contactNames.slice(
+                -1
+              )}`
+            : contactNames[0]
 
         return new Conversation(
           conversation[0]?.toString() || '',
-          name,
+          displayName,
+          contacts,
           conversation[2]?.toString() || '',
-          Boolean(conversation[1]),
-          initials,
-          conversation[3]?.toString() || '',
-         )
+          Boolean(conversation[3]),
+          conversation[4]?.toString() || ''
+        )
       })
     )
 

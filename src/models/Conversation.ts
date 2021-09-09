@@ -1,33 +1,35 @@
+import Contact from './Contact'
+
 export interface IConversation {
   id: string
-  name: string
+  displayName: string
+  contacts: (Contact | string)[]
   date: string
   fromMe: boolean
-  initials: string
   text: string
 }
 
 export default class Conversation implements IConversation {
   public id: string
-  public name: string
+  public displayName: string
+  public contacts: (Contact | string)[]
   public date: string
   public fromMe: boolean
-  public initials: string
   public text: string
 
   constructor(
     id: string,
-    name: string,
+    displayName: string,
+    contacts: (Contact | string)[],
     date: string,
     fromMe: boolean,
-    initials: string,
     text: string
   ) {
     this.id = id
-    this.name = name
+    this.displayName = displayName
+    this.contacts = contacts
     this.date = date
     this.fromMe = fromMe
-    this.initials = initials
     this.text = text
   }
 }

@@ -1,9 +1,11 @@
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import uniqueId from 'lodash/uniqueId'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
 import DatabaseFactory from '../db/DatabaseFactory'
+import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
 import Message from '../models/Message'
 import { ContactEntries } from '../repositories/ContactRepository'
@@ -49,7 +51,7 @@ const Messages = ({ conversation }: MessagesProps) => {
       entities[0].isIntersecting && setPage((page) => page + 1)
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
-      rootMargin: '0px',
+      rootMargin: '128px',
       threshold: 1,
     })
     loader.current && observer.observe(loader.current)
@@ -143,7 +145,7 @@ const Messages = ({ conversation }: MessagesProps) => {
                     ? 'mt-2'
                     : 'mt-px'
                 )}
-                key={message.datetime + index}
+                key={uniqueId('message')}
               >
                 {((index < messages.length - 1 &&
                   index > 0 &&
@@ -162,9 +164,10 @@ const Messages = ({ conversation }: MessagesProps) => {
                     !message.fromMe &&
                     message.fromMe !== messages[index - 1].fromMe)) && (
                   <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 text-gray-400 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full select-none group-hover:border-gray-800 group-focus:border-gray-800">
-                    {message.initials ? (
+                    {message.contact instanceof Contact &&
+                    message.contact.getInitials() ? (
                       <span className="text-sm font-semibold">
-                        {message.initials}
+                        {message.contact.getInitials()}
                       </span>
                     ) : (
                       <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
@@ -208,7 +211,9 @@ const Messages = ({ conversation }: MessagesProps) => {
                     message.fromMe !== messages[index - 1].fromMe) ||
                     (index === 0 && !message.fromMe)) && (
                     <span className="ml-3 text-xs text-gray-400">
-                      {message.name}
+                      {message.contact instanceof Contact
+                        ? message.contact.getFullName()
+                        : message.contact}
                       <span className="text-gray-500">
                         {' '}
                         &middot;{' '}

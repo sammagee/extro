@@ -1,6 +1,7 @@
 import BenzAMRRecorder from 'benz-amr-recorder'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import uniqueId from 'lodash/uniqueId'
 import React, {
   forwardRef,
   useContext,
@@ -145,7 +146,7 @@ const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
       entries[0].isIntersecting && setPage((page) => page + 1)
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
-      rootMargin: '0px',
+      rootMargin: '128px',
       threshold: 1,
     })
     loader.current && observer.observe(loader.current)
@@ -221,7 +222,7 @@ const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
               className="mt-3 overflow-y-auto sm:-ml-6 max-h-48 shadow-scroll overscroll-contain"
             >
               {voicemails.map((voicemail) => (
-                <div key={voicemail.id}>
+                <div key={uniqueId('voicemail')}>
                   <div className="flex items-center justify-between w-full px-6 py-2 space-x-3 overflow-hidden text-left group">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center flex-shrink-0 -space-x-6">
