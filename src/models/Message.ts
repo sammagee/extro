@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual'
 import Contact from './Contact'
 
 export type MessageService = 'iMessage' | 'SMS'
@@ -33,5 +34,17 @@ export default class Message implements IMessage {
     this.fromMe = fromMe
     this.service = service
     this.text = text
+  }
+
+  public isFirst(index: number): boolean {
+    return index === 0
+  }
+
+  public isLast(index: number, length: number): boolean {
+    return index === length - 1
+  }
+
+  public isFromSameContact(message: Message): boolean {
+    return isEqual(this.contact, message.contact)
   }
 }

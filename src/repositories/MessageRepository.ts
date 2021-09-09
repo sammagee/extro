@@ -26,7 +26,9 @@ class MessageRepository implements Repository<Message[]> {
     const query = `
       SELECT
         message.ROWID,
-        handle.id,
+        CASE WHEN (message.is_from_me = 1) THEN NULL
+        ELSE handle.id
+        END AS handle_id,
         ${parseTimestamp('message.date')} AS date,
         message.is_from_me,
         message.text,
@@ -36,7 +38,7 @@ class MessageRepository implements Repository<Message[]> {
         ON message.ROWID = chat_message_join.message_id
       JOIN chat
         ON chat.ROWID = chat_message_join.chat_id
-      JOIN handle
+      LEFT JOIN handle
         ON message.handle_id = handle.ROWID
       WHERE chat.chat_identifier = '${this.conversation.id}'
       ORDER BY message.date DESC

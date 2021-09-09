@@ -141,28 +141,29 @@ const Messages = ({ conversation }: MessagesProps) => {
                 className={clsx(
                   'max-w-xs flex items-end',
                   message.fromMe && 'ml-auto justify-end',
-                  index > 0 && message.fromMe !== messages[index - 1].fromMe
+                  !message.isFirst(index) &&
+                    !message.isFromSameContact(messages[index - 1])
                     ? 'mt-2'
                     : 'mt-px'
                 )}
                 key={uniqueId('message')}
               >
-                {((index < messages.length - 1 &&
-                  index > 0 &&
+                {((!message.isLast(index, messages.length) &&
+                  !message.isFirst(index) &&
                   !message.fromMe &&
-                  message.fromMe !== messages[index + 1].fromMe &&
-                  message.fromMe === messages[index - 1].fromMe) ||
-                  (index < messages.length - 1 &&
-                    index > 0 &&
+                  !message.isFromSameContact(messages[index + 1]) &&
+                  message.isFromSameContact(messages[index - 1])) ||
+                  (!message.isLast(index, messages.length) &&
+                    !message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe &&
-                    message.fromMe !== messages[index + 1].fromMe) ||
-                  (index === 0 &&
+                    !message.isFromSameContact(messages[index - 1]) &&
+                    !message.isFromSameContact(messages[index + 1])) ||
+                  (message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index + 1].fromMe) ||
-                  (index === messages.length - 1 &&
+                    !message.isFromSameContact(messages[index + 1])) ||
+                  (message.isLast(index, messages.length) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe)) && (
+                    !message.isFromSameContact(messages[index - 1]))) && (
                   <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 text-gray-400 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full select-none group-hover:border-gray-800 group-focus:border-gray-800">
                     {message.contact instanceof Contact &&
                     message.contact.getInitials() ? (
@@ -186,30 +187,30 @@ const Messages = ({ conversation }: MessagesProps) => {
                 <div
                   className={clsx(
                     !(
-                      (index < messages.length - 1 &&
-                        index > 0 &&
+                      (!message.isLast(index, messages.length) &&
+                        !message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe &&
-                        message.fromMe === messages[index - 1].fromMe) ||
-                      (index < messages.length - 1 &&
-                        index > 0 &&
+                        !message.isFromSameContact(messages[index + 1]) &&
+                        message.isFromSameContact(messages[index - 1])) ||
+                      (!message.isLast(index, messages.length) &&
+                        !message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index - 1].fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe) ||
-                      (index === 0 &&
+                        !message.isFromSameContact(messages[index - 1]) &&
+                        !message.isFromSameContact(messages[index + 1])) ||
+                      (message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe) ||
-                      (index === messages.length - 1 &&
+                        !message.isFromSameContact(messages[index + 1])) ||
+                      (message.isLast(index, messages.length) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index - 1].fromMe)
+                        !message.isFromSameContact(messages[index - 1]))
                     ) && 'ml-10',
                     message.fromMe && 'text-right'
                   )}
                 >
-                  {((index > 0 &&
+                  {((!message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe) ||
-                    (index === 0 && !message.fromMe)) && (
+                    !message.isFromSameContact(messages[index - 1])) ||
+                    (message.isFirst(index) && !message.fromMe)) && (
                     <span className="ml-3 text-xs text-gray-400">
                       {message.contact instanceof Contact
                         ? message.contact.getFullName()
@@ -224,10 +225,10 @@ const Messages = ({ conversation }: MessagesProps) => {
                     </span>
                   )}
 
-                  {((index > 0 &&
+                  {((!message.isFirst(index) &&
                     message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe) ||
-                    (index === 0 && message.fromMe)) && (
+                    !message.isFromSameContact(messages[index - 1])) ||
+                    (message.isFirst(index) && message.fromMe)) && (
                     <span className="mr-3 text-xs text-gray-400">
                       <span className="text-gray-500">
                         <Tooltip content={message.datetime} placement="left">
