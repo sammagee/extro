@@ -16,7 +16,7 @@ import ConversationRepository from '../repositories/ConversationRepository'
 import { downloadHtml } from '../utils/html'
 import Avatar from './Avatar'
 import Button from './Button'
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from './icons/LoadingIndicator'
 import Messages from './Messages'
 import Modal from './Modal'
 
