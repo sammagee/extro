@@ -4,10 +4,7 @@ module.exports = {
   mode: 'jit',
   purge: {
     mode: 'all',
-    content: [
-      './index.html',
-      './src/**/*.{js,ts,jsx,tsx}',
-    ],
+    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -16,7 +13,10 @@ module.exports = {
         beat: 'beat 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       colors: {
-        gray: colors.gray,
+        gray: {
+          ...colors.gray,
+          1000: '#10101B',
+        },
       },
       keyframes: {
         beat: {

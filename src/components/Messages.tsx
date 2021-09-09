@@ -11,7 +11,7 @@ import Message from '../models/Message'
 import { ContactEntries } from '../repositories/ContactRepository'
 import MessageRepository from '../repositories/MessageRepository'
 import Avatar from './Avatar'
-import LoadingIndicator from './LoadingIndicator'
+import LoadingIndicator from './icons/LoadingIndicator'
 import Tooltip from './Tooltip'
 
 interface MessagesProps {
