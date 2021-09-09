@@ -1,8 +1,8 @@
 import { Database as SqlJsDatabase } from 'sql.js'
+import Data from '../config/data'
 import Voicemail from '../models/Voicemail'
 import { ContactEntries } from './ContactRepository'
 import { Repository } from './Repository'
-import Data from '../config/data'
 
 class VoicemailRepository implements Repository<Voicemail[]> {
   private voicemails: Voicemail[] = []
@@ -32,18 +32,13 @@ class VoicemailRepository implements Repository<Voicemail[]> {
 
     this.voicemails = await Promise.all(
       voicemailsTemp.map(async (voicemail) => {
-        const contact = this.contacts[(voicemail[1] as string)]
-        const name = (contact && contact.firstName
-          ? contact.lastName ? `${contact.firstName} ${contact.lastName}` : contact.firstName
-          : voicemail[1])?.toString() || ''
-        const initials = name?.replace(/[^a-zA-Z\s]/g, '').match(/\b\w/g)?.join('').toUpperCase() || ''
+        const contact = this.contacts[voicemail[1] as string] || voicemail[1]
 
         return new Voicemail(
           voicemail[0]?.toString() || '',
-          name,
+          contact,
           voicemail[2]?.toString() || '',
           parseInt(voicemail[3]?.toString() || '0'),
-          initials,
           Boolean(voicemail[4])
         )
       })

@@ -1,35 +1,32 @@
-import dayjs from "dayjs"
+import dayjs from 'dayjs'
+import Contact from './Contact'
 
 export interface IVoicemail {
   id: string
-  name: string
+  contact: Contact | string
   datetime: string
   duration: number
-  initials: string
   trashed: boolean
 }
 
 export default class Voicemail implements IVoicemail {
   public id: string
-  public name: string
+  public contact: Contact | string
   public datetime: string
   public duration: number
-  public initials: string
   public trashed: boolean
 
   constructor(
     id: string,
-    name: string,
+    contact: Contact | string,
     datetime: string,
     duration: number,
-    initials: string,
     trashed: boolean
   ) {
     this.id = id
-    this.name = name
+    this.contact = contact
     this.datetime = datetime
     this.duration = duration
-    this.initials = initials
     this.trashed = trashed
   }
 

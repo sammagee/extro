@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import uniqueId from 'lodash/uniqueId'
 import React, {
   forwardRef,
   useContext,
@@ -9,9 +10,11 @@ import React, {
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
 import DatabaseFactory from '../db/DatabaseFactory'
+import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
 import ConversationRepository from '../repositories/ConversationRepository'
 import { downloadHtml } from '../utils/html'
+import Avatar from './Avatar'
 import Button from './Button'
 import LoadingIndicator from './LoadingIndicator'
 import Messages from './Messages'
@@ -60,7 +63,7 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
 
   const downloadMessages = async () => {
     if (!selectedConversation) return
-    downloadHtml(`Conversation_${selectedConversation.name}`, 'messages')
+    downloadHtml(`Conversation_${selectedConversation.displayName}`, 'messages')
   }
 
   const resetMessages = () => {
@@ -78,7 +81,7 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
       entries[0].isIntersecting && setPage((page) => page + 1)
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
-      rootMargin: '0px',
+      rootMargin: '128px',
       threshold: 1,
     })
     loader.current && observer.observe(loader.current)
@@ -179,10 +182,10 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
                 </svg>
               </button>
 
-              <span>
+              <span className="line-clamp-1">
                 Conversation with{' '}
                 <span className="text-gray-400">
-                  {selectedConversation?.name}
+                  {selectedConversation?.displayName}
                 </span>
               </span>
             </div>
@@ -199,39 +202,49 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
               className="mt-3 overflow-y-auto max-h-48 sm:-ml-6 shadow-scroll overscroll-contain"
             >
               {conversations?.map((conversation) => (
-                <div key={conversation.id}>
-                  <button
-                    className="flex items-center justify-between w-full px-6 py-2 space-x-3 overflow-hidden text-left transition-colors duration-200 ease-in-out rounded-xl focus:outline-none hover:bg-gray-800 focus:bg-gray-800 group"
-                    onClick={() => selectConversation(conversation)}
-                  >
-                    <div>
-                      <span className="font-semibold">{conversation.name}</span>
-                      <p className="text-sm break-all line-clamp-1">
-                        {conversation.text}
-                      </p>
-                    </div>
+                <button
+                  className="flex items-center justify-between w-full px-6 py-2 space-x-3 overflow-hidden text-left transition-colors ease-in-out duration-250 rounded-xl focus:outline-none hover:bg-gray-800 focus:bg-gray-800 group"
+                  key={uniqueId('conversation')}
+                  onClick={() => selectConversation(conversation)}
+                >
+                  <div>
+                    <span className="font-semibold line-clamp-1">
+                      {conversation.displayName}
+                    </span>
+                    <p className="text-sm break-all line-clamp-1">
+                      {conversation.text}
+                    </p>
+                  </div>
 
-                    <div className="flex items-center flex-shrink-0 -space-x-6">
-                      <div className="flex items-center justify-center w-12 h-12 transition-colors duration-200 ease-in-out bg-gray-700 border-4 border-gray-900 rounded-full select-none group-hover:border-gray-800 group-focus:border-gray-800">
-                        {conversation.initials ? (
-                          <span className="text-base font-semibold">
-                            {conversation.initials}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
-                            <svg
-                              className="w-6 h-6"
-                              fill="currentColor"
-                              viewBox="0 0 83 89"
-                            >
-                              <path d="M41.864 43.258c10.45 0 19.532-9.375 19.532-21.582C61.396 9.616 52.314.68 41.864.68c-10.449 0-19.53 9.13-19.53 21.093 0 12.11 9.032 21.485 19.53 21.485zM11.152 88.473H72.48c7.715 0 10.449-2.198 10.449-6.495 0-12.597-15.772-29.98-41.113-29.98C16.523 51.998.75 69.381.75 81.978c0 4.297 2.735 6.495 10.4 6.495z" />
-                            </svg>
-                          </span>
-                        )}
-                      </div>
+                  <div className="relative flex items-center flex-shrink-0 -space-x-10 group">
+                    {conversation.contacts
+                      .slice(0, 3)
+                      .map((contact: Contact | string) => (
+                        <Avatar
+                          contact={contact}
+                          className="transition-colors ease-in-out duration-250"
+                          border="border-4 border-gray-900 group-hover:border-gray-800 group-focus:border-gray-800"
+                          tooltipPlacement="left"
+                          key={uniqueId('conversationContact')}
+                        />
+                      ))
+                      .reverse()}
+
+                    <div className="absolute right-0 flex items-center flex-shrink-0 transition-opacity ease-in-out opacity-0 hover:opacity-100 duration-250 group">
+                      {conversation.contacts
+                        .map((contact: Contact | string) => (
+                          <Avatar
+                            contact={contact}
+                            className="-ml-10 transition-all ease-in-out duration-250 group-hover:-ml-4"
+                            border="border-4 border-gray-900 group-hover:border-gray-800 group-focus:border-gray-800"
+                            tooltipPlacement="left"
+                            key={uniqueId('conversationContact')}
+                          />
+                        ))
+                        .reverse()}
                     </div>
-                  </button>
-                </div>
+                  </div>
+                </button>
               ))}
 
               {!end ? (

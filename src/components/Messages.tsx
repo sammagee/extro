@@ -1,13 +1,16 @@
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import uniqueId from 'lodash/uniqueId'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
 import DatabaseFactory from '../db/DatabaseFactory'
+import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
 import Message from '../models/Message'
 import { ContactEntries } from '../repositories/ContactRepository'
 import MessageRepository from '../repositories/MessageRepository'
+import Avatar from './Avatar'
 import LoadingIndicator from './LoadingIndicator'
 import Tooltip from './Tooltip'
 
@@ -49,7 +52,7 @@ const Messages = ({ conversation }: MessagesProps) => {
       entities[0].isIntersecting && setPage((page) => page + 1)
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
-      rootMargin: '0px',
+      rootMargin: '128px',
       threshold: 1,
     })
     loader.current && observer.observe(loader.current)
@@ -139,76 +142,65 @@ const Messages = ({ conversation }: MessagesProps) => {
                 className={clsx(
                   'max-w-xs flex items-end',
                   message.fromMe && 'ml-auto justify-end',
-                  index > 0 && message.fromMe !== messages[index - 1].fromMe
+                  !message.isFirst(index) &&
+                    !message.isFromSameContact(messages[index - 1])
                     ? 'mt-2'
                     : 'mt-px'
                 )}
-                key={message.datetime + index}
+                key={uniqueId('message')}
               >
-                {((index < messages.length - 1 &&
-                  index > 0 &&
+                {((!message.isLast(index, messages.length) &&
+                  !message.isFirst(index) &&
                   !message.fromMe &&
-                  message.fromMe !== messages[index + 1].fromMe &&
-                  message.fromMe === messages[index - 1].fromMe) ||
-                  (index < messages.length - 1 &&
-                    index > 0 &&
+                  !message.isFromSameContact(messages[index + 1]) &&
+                  message.isFromSameContact(messages[index - 1])) ||
+                  (!message.isLast(index, messages.length) &&
+                    !message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe &&
-                    message.fromMe !== messages[index + 1].fromMe) ||
-                  (index === 0 &&
+                    !message.isFromSameContact(messages[index - 1]) &&
+                    !message.isFromSameContact(messages[index + 1])) ||
+                  (message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index + 1].fromMe) ||
-                  (index === messages.length - 1 &&
+                    !message.isFromSameContact(messages[index + 1])) ||
+                  (message.isLast(index, messages.length) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe)) && (
-                  <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 mr-2 text-gray-400 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full select-none group-hover:border-gray-800 group-focus:border-gray-800">
-                    {message.initials ? (
-                      <span className="text-sm font-semibold">
-                        {message.initials}
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center justify-center overflow-hidden rounded-full">
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 83 89"
-                        >
-                          <path d="M41.864 43.258c10.45 0 19.532-9.375 19.532-21.582C61.396 9.616 52.314.68 41.864.68c-10.449 0-19.53 9.13-19.53 21.093 0 12.11 9.032 21.485 19.53 21.485zM11.152 88.473H72.48c7.715 0 10.449-2.198 10.449-6.495 0-12.597-15.772-29.98-41.113-29.98C16.523 51.998.75 69.381.75 81.978c0 4.297 2.735 6.495 10.4 6.495z" />
-                        </svg>
-                      </span>
-                    )}
-                  </div>
+                    !message.isFromSameContact(messages[index - 1]))) && (
+                  <Avatar contact={message.contact} size="w-8 h-8" />
                 )}
 
                 <div
                   className={clsx(
                     !(
-                      (index < messages.length - 1 &&
-                        index > 0 &&
+                      (!message.isLast(index, messages.length) &&
+                        !message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe &&
-                        message.fromMe === messages[index - 1].fromMe) ||
-                      (index < messages.length - 1 &&
-                        index > 0 &&
+                        !message.isFromSameContact(messages[index + 1]) &&
+                        message.isFromSameContact(messages[index - 1])) ||
+                      (!message.isLast(index, messages.length) &&
+                        !message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index - 1].fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe) ||
-                      (index === 0 &&
+                        !message.isFromSameContact(messages[index - 1]) &&
+                        !message.isFromSameContact(messages[index + 1])) ||
+                      (message.isFirst(index) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index + 1].fromMe) ||
-                      (index === messages.length - 1 &&
+                        !message.isFromSameContact(messages[index + 1])) ||
+                      (message.isLast(index, messages.length) &&
                         !message.fromMe &&
-                        message.fromMe !== messages[index - 1].fromMe)
-                    ) && 'ml-10',
+                        !message.isFromSameContact(messages[index - 1]))
+                    )
+                      ? 'ml-10'
+                      : 'ml-2',
                     message.fromMe && 'text-right'
                   )}
                 >
-                  {((index > 0 &&
+                  {((!message.isFirst(index) &&
                     !message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe) ||
-                    (index === 0 && !message.fromMe)) && (
+                    !message.isFromSameContact(messages[index - 1])) ||
+                    (message.isFirst(index) && !message.fromMe)) && (
                     <span className="ml-3 text-xs text-gray-400">
-                      {message.name}
+                      {message.contact instanceof Contact
+                        ? message.contact.getFullName()
+                        : message.contact}
                       <span className="text-gray-500">
                         {' '}
                         &middot;{' '}
@@ -219,10 +211,10 @@ const Messages = ({ conversation }: MessagesProps) => {
                     </span>
                   )}
 
-                  {((index > 0 &&
+                  {((!message.isFirst(index) &&
                     message.fromMe &&
-                    message.fromMe !== messages[index - 1].fromMe) ||
-                    (index === 0 && message.fromMe)) && (
+                    !message.isFromSameContact(messages[index - 1])) ||
+                    (message.isFirst(index) && message.fromMe)) && (
                     <span className="mr-3 text-xs text-gray-400">
                       <span className="text-gray-500">
                         <Tooltip content={message.datetime} placement="left">
