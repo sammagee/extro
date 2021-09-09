@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2021-09-09
+
 ### Changed
 
 - Rather than using a simple string for contact names, we now add a Contact for each "handle" associated with either a Conversation, Message, or Voicemail
