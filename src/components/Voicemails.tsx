@@ -147,27 +147,33 @@ const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
     return () => clearInterval(interval)
   }, [])
 
+  // Load voicemails when page changes
+  useEffect(() => {
+    const loadMore = async () => {
+      if (!isOpen || !container.current) return
+      const currentScrollTop = container.current.scrollTop
+      await load()
+      container.current.scrollTop = currentScrollTop
+    }
+
+    if (page > 0) loadMore()
+  }, [page])
+
   // Load next page of voicemails when user scrolls to loader
   useEffect(() => {
-    if (!container.current) return
+    if (loading || !container.current || !loader.current) return
+
     const handleObserver = (entries: IntersectionObserverEntry[]) =>
-      entries[0].isIntersecting && setPage((page) => page + 1)
+      entries[0].isIntersecting && setPage((prevPage) => prevPage + 1)
+
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
       rootMargin: '128px',
-      threshold: 1,
+      threshold: 0.25,
     })
-    loader.current && observer.observe(loader.current)
-  }, [container.current])
 
-  // Load voicemails when page changes
-  useEffect(() => {
-    const loadVoicemails = async () => {
-      if (!isOpen) return
-      await load()
-    }
-    loadVoicemails()
-  }, [page])
+    observer.observe(loader.current)
+  }, [loading])
 
   return (
     <>

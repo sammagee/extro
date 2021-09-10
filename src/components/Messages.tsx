@@ -49,34 +49,6 @@ const Messages = ({ conversation }: MessagesProps) => {
     setLoadingPage(false)
   }
 
-  // Load next page of messages when user scrolls to loader
-  useEffect(() => {
-    if (!container.current) return
-    container.current.scrollTop = container.current.scrollHeight
-    const handleObserver = (entities: any) =>
-      entities[0].isIntersecting && setPage((page) => page + 1)
-    const observer = new IntersectionObserver(handleObserver, {
-      root: container.current,
-      rootMargin: '128px',
-      threshold: 1,
-    })
-    loader.current && observer.observe(loader.current)
-  }, [container.current])
-
-  // Scroll to bottom of messages container
-  useEffect(() => {
-    const loadMessages = async () => {
-      if (!container.current || loading || !conversation) return
-      const currentScrollHeight = container.current.scrollHeight
-      await load()
-      if (container.current)
-        container.current.scrollTop =
-          container.current.scrollHeight - currentScrollHeight
-    }
-
-    loadMessages()
-  }, [page])
-
   // Reset messages if there is no conversation, load messages if there is
   useEffect(() => {
     if (!conversation) {
@@ -96,6 +68,37 @@ const Messages = ({ conversation }: MessagesProps) => {
     }
     loadMessages()
   }, [conversation])
+
+  // Scroll to bottom of messages container
+  useEffect(() => {
+    const loadMore = async () => {
+      if (!container.current || !conversation) return
+      const currentScrollHeight = container.current.scrollHeight
+      await load()
+      container.current.scrollTop =
+        container.current.scrollHeight - currentScrollHeight
+    }
+
+    if (page > 0) loadMore()
+  }, [page])
+
+  // Load next page of messages when user scrolls to loader
+  useEffect(() => {
+    if (loading || !container.current || !loader.current) return
+
+    container.current.scrollTop = container.current.scrollHeight
+
+    const handleObserver = (entities: IntersectionObserverEntry[]) =>
+      entities[0].isIntersecting && setPage((prevPage) => prevPage + 1)
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: container.current,
+      rootMargin: '128px',
+      threshold: 0.25,
+    })
+
+    observer.observe(loader.current)
+  }, [loading])
 
   return (
     <>

@@ -47,8 +47,6 @@ class MessageRepository implements Repository<Message[]> {
     `
     const messagesTemp = this.db.exec(query)?.[0]?.values
 
-    if (!messagesTemp) return this.messages
-
     this.messages = await Promise.all(
       messagesTemp.map(async (message) => {
         const index = parsePhoneNumberFromString(

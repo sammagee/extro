@@ -80,27 +80,33 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
     setSelectedConversation(conversation)
   }
 
+  // Load conversations when page changes
+  useEffect(() => {
+    const loadMore = async () => {
+      if (!isOpen || !container.current) return
+      const currentScrollTop = container.current.scrollTop
+      await load()
+      container.current.scrollTop = currentScrollTop
+    }
+
+    if (page > 0) loadMore()
+  }, [page])
+
   // Load next page of conversations when user scrolls to loader
   useEffect(() => {
-    if (!container.current) return
+    if (loading || !container.current || !loader.current) return
+
     const handleObserver = (entries: IntersectionObserverEntry[]) =>
-      entries[0].isIntersecting && setPage((page) => page + 1)
+      entries[0].isIntersecting && setPage((prevPage) => prevPage + 1)
+
     const observer = new IntersectionObserver(handleObserver, {
       root: container.current,
       rootMargin: '128px',
-      threshold: 1,
+      threshold: 0.25,
     })
-    loader.current && observer.observe(loader.current)
-  }, [container.current])
 
-  // Load conversations when page changes
-  useEffect(() => {
-    const loadConversations = async () => {
-      if (!isOpen) return
-      await load()
-    }
-    loadConversations()
-  }, [page])
+    observer.observe(loader.current)
+  }, [loading])
 
   return (
     <>

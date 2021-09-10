@@ -31,7 +31,7 @@ const Avatar = ({
     >
       <div
         className={clsx(
-          'flex items-center justify-center flex-shrink-0 bg-gray-700 rounded-full select-none',
+          'flex items-center justify-center flex-shrink-0 bg-gray-700 rounded-full select-none text-gray-400',
           className,
           border,
           size
