@@ -25,8 +25,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
           y2="44.35"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#a52714" stop-opacity=".6" offset="0" />
-          <stop stop-color="#a52714" stop-opacity="0" offset=".66" />
+          <stop stopColor="#a52714" stopOpacity=".6" offset="0" />
+          <stop stopColor="#a52714" stopOpacity="0" offset=".66" />
         </linearGradient>
         <path d="M21.97 8v108h39.4L96 56h88V8z" fill="url(#D)" />
         <path d="M62.3 115.6L22.48 47.3l-.58 1 39.54 67.8z" className="C D" />
@@ -39,8 +39,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
           y2="130.3"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#055524" stop-opacity=".4" offset="0" />
-          <stop stop-color="#055524" stop-opacity="0" offset=".33" />
+          <stop stopColor="#055524" stopOpacity=".4" offset="0" />
+          <stop stopColor="#055524" stopOpacity="0" offset=".33" />
         </linearGradient>
         <path d="M8 184h83.77l38.88-38.88V116h-69.3L8 24.48z" fill="url(#E)" />
         <path
@@ -54,7 +54,7 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
         <clipPath id="G">
           <use xlinkHref="#F" />
         </clipPath>
-        <g clip-path="url(#G)">
+        <g clipPath="url(#G)">
           <path d="M96 56l34.65 60-38.88 68H184V56z" fill="#ffcd40" />
           <linearGradient
             id="H"
@@ -64,8 +64,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
             y2="114.1"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#ea6100" stop-opacity=".3" offset="0" />
-            <stop stop-color="#ea6100" stop-opacity="0" offset=".66" />
+            <stop stopColor="#ea6100" stopOpacity=".3" offset="0" />
+            <stop stopColor="#ea6100" stopOpacity="0" offset=".66" />
           </linearGradient>
           <path d="M96 56l34.65 60-38.88 68H184V56z" fill="url(#H)" />
         </g>
@@ -77,7 +77,7 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
         <clipPath id="J">
           <use xlinkHref="#I" />
         </clipPath>
-        <g clip-path="url(#J)">
+        <g clipPath="url(#J)">
           <path d="M21.97 8v108h39.4L96 56h88V8z" fill="#db4437" />
           <path d="M21.97 8v108h39.4L96 56h88V8z" fill="url(#D)" />
         </g>
@@ -90,8 +90,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
         gradientTransform="translate(-576)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#3e2723" stop-opacity=".2" offset="0" />
-        <stop stop-color="#3e2723" stop-opacity="0" offset="1" />
+        <stop stopColor="#3e2723" stopOpacity=".2" offset="0" />
+        <stop stopColor="#3e2723" stopOpacity="0" offset="1" />
       </radialGradient>
       <g transform="translate(-7 -7)">
         <path d="M96 56v20.95L174.4 56z" fill="url(#K)" className="B" />
@@ -102,7 +102,7 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
           <clipPath id="M">
             <use xlinkHref="#L" />
           </clipPath>
-          <g clip-path="url(#M)">
+          <g clipPath="url(#M)">
             <use xlinkHref="#B" fill="#0f9d58" />
             <path
               d="M8 184h83.77l38.88-38.88V116h-69.3L8 24.48z"
@@ -119,8 +119,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
         gradientTransform="translate(-576)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#3e2723" stop-opacity=".2" offset="0" />
-        <stop stop-color="#3e2723" stop-opacity="0" offset="1" />
+        <stop stopColor="#3e2723" stopOpacity=".2" offset="0" />
+        <stop stopColor="#3e2723" stopOpacity="0" offset="1" />
       </radialGradient>
       <path
         transform="translate(-7 -7)"
@@ -136,8 +136,8 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
         gradientTransform="translate(-576)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#263238" stop-opacity=".2" offset="0" />
-        <stop stop-color="#263238" stop-opacity="0" offset="1" />
+        <stop stopColor="#263238" stopOpacity=".2" offset="0" />
+        <stop stopColor="#263238" stopOpacity="0" offset="1" />
       </radialGradient>
       <g transform="translate(-7 -7)">
         <path
@@ -155,7 +155,7 @@ const ChromeIcon = ({ className }: ChromeIconProps) => {
           <path
             d="M130.6 116c-6.92 11.94-19.8 20-34.6 20-14.8 0-27.7-8.06-34.6-20h-.04L8 24.48v1L61.4 117c6.92 11.94 19.8 20 34.6 20 14.8 0 27.68-8.05 34.6-20h.05v-1h-.06z"
             fill="#fff"
-            fill-opacity=".1"
+            fillOpacity=".1"
           />
           <path
             d="M97 56c-.17 0-.33.02-.5.03C118.36 56.3 136 74.08 136 96s-17.64 39.7-39.5 39.97c.17 0 .33.03.5.03 22.1 0 40-17.9 40-40s-17.9-40-40-40z"

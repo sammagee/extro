@@ -18,8 +18,8 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(1, 0, 0, -1, 0, 266)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#0c59a4" />
-          <stop offset="1" stop-color="#114a8b" />
+          <stop offset="0" stopColor="#0c59a4" />
+          <stop offset="1" stopColor="#114a8b" />
         </linearGradient>
         <radialGradient
           id="radial-gradient"
@@ -29,8 +29,8 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(1, 0, 0, -0.95, 0, 248.84)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.72" stop-opacity="0" />
-          <stop offset="0.95" stop-opacity="0.53" />
+          <stop offset="0.72" stopOpacity="0" />
+          <stop offset="0.95" stopOpacity="0.53" />
           <stop offset="1" />
         </radialGradient>
         <linearGradient
@@ -42,10 +42,10 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(1, 0, 0, -1, 0, 266)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#1b9de2" />
-          <stop offset="0.16" stop-color="#1595df" />
-          <stop offset="0.67" stop-color="#0680d7" />
-          <stop offset="1" stop-color="#0078d4" />
+          <stop offset="0" stopColor="#1b9de2" />
+          <stop offset="0.16" stopColor="#1595df" />
+          <stop offset="0.67" stopColor="#0680d7" />
+          <stop offset="1" stopColor="#0078d4" />
         </linearGradient>
         <radialGradient
           id="radial-gradient-2"
@@ -55,8 +55,8 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(0.15, -0.99, -0.8, -0.12, 176.64, -125.4)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.76" stop-opacity="0" />
-          <stop offset="0.95" stop-opacity="0.5" />
+          <stop offset="0.76" stopOpacity="0" />
+          <stop offset="0.95" stopOpacity="0.5" />
           <stop offset="1" />
         </radialGradient>
         <radialGradient
@@ -67,11 +67,11 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(-0.04, 1, 2.13, 0.08, -1179.54, -106.69)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#35c1f1" />
-          <stop offset="0.11" stop-color="#34c1ed" />
-          <stop offset="0.23" stop-color="#2fc2df" />
-          <stop offset="0.31" stop-color="#2bc3d2" />
-          <stop offset="0.67" stop-color="#36c752" />
+          <stop offset="0" stopColor="#35c1f1" />
+          <stop offset="0.11" stopColor="#34c1ed" />
+          <stop offset="0.23" stopColor="#2fc2df" />
+          <stop offset="0.31" stopColor="#2bc3d2" />
+          <stop offset="0.67" stopColor="#36c752" />
         </radialGradient>
         <radialGradient
           id="radial-gradient-4"
@@ -81,8 +81,8 @@ const EdgeIcon = ({ className }: EdgeIconProps) => {
           gradientTransform="matrix(0.28, 0.96, 0.78, -0.23, -303.76, -148.5)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stop-color="#66eb6e" />
-          <stop offset="1" stop-color="#66eb6e" stop-opacity="0" />
+          <stop offset="0" stopColor="#66eb6e" />
+          <stop offset="1" stopColor="#66eb6e" stopOpacity="0" />
         </radialGradient>
       </defs>
       <title>Edge_Logo_265x265</title>

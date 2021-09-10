@@ -19,6 +19,7 @@ import Button from './Button'
 import LoadingIndicator from './icons/LoadingIndicator'
 import Messages from './Messages'
 import Modal from './Modal'
+import Tooltip from './Tooltip'
 
 const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
   const { sql, backupFolder } = useContext<IBackupContext>(BackupContext)
@@ -184,9 +185,17 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
 
               <span className="line-clamp-1">
                 Conversation with{' '}
-                <span className="text-gray-400">
-                  {selectedConversation?.displayName}
-                </span>
+                <Tooltip
+                  content={selectedConversation?.displayName}
+                  placement="bottom"
+                >
+                  <span
+                    className="text-gray-400"
+                    title={selectedConversation?.displayName}
+                  >
+                    {selectedConversation?.displayName}
+                  </span>
+                </Tooltip>
               </span>
             </div>
           ) : (

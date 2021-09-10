@@ -1,3 +1,4 @@
+import parsePhoneNumberFromString from 'libphonenumber-js'
 import { Database as SqlJsDatabase } from 'sql.js'
 import Data from '../config/data'
 import Contact from '../models/Contact'
@@ -51,9 +52,11 @@ class ConversationRepository implements Repository<Conversation[]> {
     this.conversations = await Promise.all(
       conversationsTemp.map(async (conversation) => {
         const handles = (conversation[1] as string).split(',')
-        const contacts = handles.map(
-          (handle) => this.contacts[handle] || handle
-        )
+        const contacts = handles.map((handle) => {
+          const index = parsePhoneNumberFromString(handle)?.number.toString()
+
+          return index ? this.contacts[index] || handle : handle
+        })
         const contactNames = contacts.map((contact) =>
           contact instanceof Contact
             ? `${contact.firstName} ${contact.lastName}`.trim()

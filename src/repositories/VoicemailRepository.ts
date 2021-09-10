@@ -1,3 +1,4 @@
+import parsePhoneNumberFromString from 'libphonenumber-js'
 import { Database as SqlJsDatabase } from 'sql.js'
 import Data from '../config/data'
 import Voicemail from '../models/Voicemail'
@@ -32,7 +33,12 @@ class VoicemailRepository implements Repository<Voicemail[]> {
 
     this.voicemails = await Promise.all(
       voicemailsTemp.map(async (voicemail) => {
-        const contact = this.contacts[voicemail[1] as string] || voicemail[1]
+        const index = parsePhoneNumberFromString(
+          voicemail[1]?.toString() || ''
+        )?.number.toString()
+        const contact = index
+          ? this.contacts[index] || (voicemail[1] as string)
+          : (voicemail[1] as string)
 
         return new Voicemail(
           voicemail[0]?.toString() || '',

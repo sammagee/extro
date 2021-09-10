@@ -1,5 +1,6 @@
-import { Database as SqlJsDatabase } from 'sql.js'
+import { findPhoneNumbersInText } from 'libphonenumber-js'
 import isEmpty from 'lodash/isEmpty'
+import { Database as SqlJsDatabase } from 'sql.js'
 import Contact from '../models/Contact'
 import { Repository } from './Repository'
 
@@ -25,15 +26,18 @@ class ContactRepository implements Repository<ContactEntries> {
     `
     const results = this.db.exec(query)?.[0]?.values
 
-    results.forEach(result => {
+    results.forEach((result) => {
       if (result[0]) {
-        const phoneNums = result?.[0].toString().trim().split(/(?<!\))\s+/)
-        phoneNums.forEach(phoneNum => 
-          this.contacts[phoneNum] = new Contact(
+        const phoneNums = findPhoneNumbersInText(result?.[0].toString())
+
+        phoneNums.forEach((phoneNum) => {
+          const index = phoneNum.number.number.toString()
+
+          this.contacts[index] = new Contact(
             result?.[1]?.toString() || '',
             result?.[2]?.toString() || ''
           )
-        )
+        })
       }
     })
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2021-09-09
+
+### Fixed
+
+- Fixed the app loading in Safari by shrinking and changing the Address Book/Contacts usage
+
 ## [1.2.0] - 2021-09-09
 
 ### Added

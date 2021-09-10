@@ -1,3 +1,4 @@
+import parsePhoneNumberFromString from 'libphonenumber-js'
 import { Database as SqlJsDatabase } from 'sql.js'
 import Data from '../config/data'
 import Conversation from '../models/Conversation'
@@ -50,8 +51,12 @@ class MessageRepository implements Repository<Message[]> {
 
     this.messages = await Promise.all(
       messagesTemp.map(async (message) => {
-        const contact =
-          this.contacts[message[1] as string] || message[1]?.toString()
+        const index = parsePhoneNumberFromString(
+          message[1]?.toString() || ''
+        )?.number.toString()
+        const contact = index
+          ? this.contacts[index] || (message[1] as string)
+          : (message[1] as string)
 
         return new Message(
           message[0]?.toString() || '',
