@@ -37,7 +37,7 @@ const Toggle = ({
       <span
         aria-hidden="true"
         className={clsx(
-          'pointer-events-none inline-flex items-center justify-center h-6 w-6 shadow-sm rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200',
+          'pointer-events-none inline-flex items-center justify-center h-6 w-6 shadow-sm rounded-full bg-white transform ring-0 transition ease-in-out duration-200',
           on ? 'translate-x-5' : 'translate-x-0'
         )}
       >
