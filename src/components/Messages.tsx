@@ -109,7 +109,7 @@ const Messages = ({ conversation }: MessagesProps) => {
             <button
               ref={loader}
               className={clsx(
-                'select-none flex items-center justify-center w-10 h-10 mx-auto mt-3 transition-colors duration-200 ease-in-out bg-gray-800 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-gray-900 focus:ring-offset-2 focus:bg-gray-700',
+                'select-none flex items-center justify-center w-10 h-10 mx-auto mt-3 transition-colors duration-200 ease-in-out bg-gray-800 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-gray-900 focus:ring-offset-2 focus:bg-gray-700',
                 loadingPage
                   ? 'opacity-50 cursor-not-allowed'
                   : 'hover:bg-gray-700'

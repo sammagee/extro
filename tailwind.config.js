@@ -14,6 +14,7 @@ module.exports = {
       },
       colors: {
         gray: colors.gray,
+        brand: colors.emerald,
       },
       keyframes: {
         beat: {

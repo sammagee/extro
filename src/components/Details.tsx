@@ -23,7 +23,7 @@ const Details = ({
     <>
       <button
         className={clsx(
-          'flex items-center justify-between w-full border-2 border-transparent focus:outline-none -ml-0.5 -top-0.5 focus-visible:border-green-500',
+          'flex items-center justify-between w-full border-2 border-transparent focus:outline-none -ml-0.5 -top-0.5 focus-visible:border-brand-500',
           disabled && 'opacity-25 cursor-not-allowed'
         )}
         disabled={disabled}

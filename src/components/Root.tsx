@@ -182,7 +182,7 @@ const Root = () => {
                 <Info type="note">
                   This will currently only work in the latest versions of{' '}
                   <a
-                    className="focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="focus:outline-none focus:ring-2 focus:ring-brand-500"
                     href="https://www.google.com/chrome/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -207,7 +207,7 @@ const Root = () => {
                   </span>
 
                   {loadingContacts && (
-                    <LoadingIndicator color="text-green-100" />
+                    <LoadingIndicator color="text-brand-100" />
                   )}
                 </Button>
               </Details>

@@ -14,7 +14,7 @@ const Footer = () => {
       <p className="flex items-center text-gray-500">
         Made with&nbsp;
         <svg
-          className="flex-shrink-0 w-4 h-4 text-green-500 animate-beat"
+          className="flex-shrink-0 w-4 h-4 text-brand-500 animate-beat"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -26,7 +26,7 @@ const Footer = () => {
         </svg>
         &nbsp;by&nbsp;
         <a
-          className="font-medium hover:underline focus:ring-2 focus:outline-none focus:ring-green-500"
+          className="font-medium hover:underline focus:ring-2 focus:outline-none focus:ring-brand-500"
           href="https://krafted.dev"
           target="_blank"
           rel="noopener noreferrer"

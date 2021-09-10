@@ -6,11 +6,11 @@ const Header = () => {
       <header className="md:-ml-10">
         <h1>
           <a
-            className="flex items-center space-x-2 text-4xl font-extrabold text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex items-center space-x-2 text-4xl font-extrabold text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
             href="/"
           >
             <svg
-              className="w-10 h-10 -mt-2 -ml-2 text-green-100"
+              className="w-10 h-10 -mt-2 -ml-2 text-brand-100"
               fill="currentColor"
               viewBox="0 0 512 512"
             >
@@ -22,10 +22,10 @@ const Header = () => {
         </h1>
       </header>
 
-      <h2 className="mt-6 text-2xl font-bold text-green-200">
+      <h2 className="mt-6 text-2xl font-bold text-brand-200">
         View and save your backed up{' '}
-        <span className="text-green-500">conversations</span> and{' '}
-        <span className="text-green-500">voicemails</span> without having to
+        <span className="text-brand-500">conversations</span> and{' '}
+        <span className="text-brand-500">voicemails</span> without having to
         download a thing
       </h2>
     </>

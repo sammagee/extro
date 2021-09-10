@@ -27,9 +27,9 @@ const Toggle = ({
       disabled={disabled}
       onChange={onChange}
       className={clsx(
-        'relative inline-flex flex-shrink-0 h-7 w-12 border-2 border-transparent rounded-full transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2  focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800',
+        'relative inline-flex flex-shrink-0 h-7 w-12 border-2 border-transparent rounded-full transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2  focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-gray-800',
         disabled ? 'cursor-not-allowed' : 'cursor-pointer',
-        on ? 'bg-green-500' : 'bg-gray-900'
+        on ? 'bg-brand-500' : 'bg-gray-900'
       )}
     >
       <span className="sr-only">{on ? offLabel : onLabel}</span>
@@ -43,7 +43,7 @@ const Toggle = ({
       >
         {on && onIcon && (
           <svg
-            className="w-3 h-3 text-green-500"
+            className="w-3 h-3 text-brand-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >

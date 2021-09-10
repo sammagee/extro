@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- "green" is now referenced to as "brand," in case the color needs to be changed in the future
+
+### Fixed
+
+- Sometimes messages would show up duplicated in a conversation, this is now resolved
+
 ## [1.3.0] - 2021-09-10
 
 ### Added
