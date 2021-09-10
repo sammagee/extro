@@ -38,10 +38,10 @@ const NotSupported = () => {
             href="//www.google.com/chrome/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-5 py-4 space-x-3 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
+            className="flex items-center justify-between px-5 py-4 space-x-3 text-sm font-semibold transition-colors ease-in-out rounded-full sm:text-lg hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
           >
             <div className="flex items-center space-x-3">
-              <ChromeIcon className="opacity-75 w-7 h-7 filter grayscale" />
+              <ChromeIcon className="flex-shrink-0 opacity-75 w-7 h-7 filter grayscale" />
 
               <span>Google Chrome</span>
               <span className="inline-block px-2 py-1 text-xs font-normal bg-gray-700 rounded-full top-px">
@@ -69,10 +69,10 @@ const NotSupported = () => {
             href="//www.microsoft.com/edge"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-5 py-4 space-x-3 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
+            className="flex items-center justify-between px-5 py-4 space-x-3 text-sm font-semibold transition-colors ease-in-out rounded-full sm:text-lg hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
           >
             <div className="flex items-center space-x-3">
-              <EdgeIcon className="opacity-75 w-7 h-7 filter grayscale" />
+              <EdgeIcon className="flex-shrink-0 opacity-75 w-7 h-7 filter grayscale" />
 
               <span>Microsoft Edge</span>
               <span className="inline-block px-2 py-1 text-xs font-normal bg-gray-700 rounded-full top-px">
