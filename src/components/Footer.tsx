@@ -1,9 +1,17 @@
+import clsx from 'clsx'
 import React from 'react'
+import { isSupported } from '../utils/support'
+import Preferences from './Preferences'
 
 const Footer = () => {
   return (
-    <footer>
-      <p className="flex items-center justify-center mt-6 text-gray-500">
+    <footer
+      className={clsx(
+        'flex items-center mt-12 space-x-6',
+        isSupported() ? 'justify-between' : 'justify-center'
+      )}
+    >
+      <p className="flex items-center text-gray-500">
         Made with&nbsp;
         <svg
           className="flex-shrink-0 w-4 h-4 text-green-500 animate-beat"
@@ -26,6 +34,8 @@ const Footer = () => {
           Krafted
         </a>
       </p>
+
+      {isSupported() && <Preferences />}
     </footer>
   )
 }

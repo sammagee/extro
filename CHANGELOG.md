@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2021-09-10
+
+### Added
+
+- Preferences are now supported:
+  - A toggle to turn on and off "private mode," which blurs messages and contact names
+  - A toggle to switch between text/video mode (this will be disabled until videos are added)
+
 ## [1.2.1] - 2021-09-09
 
 ### Fixed

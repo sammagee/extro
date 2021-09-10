@@ -13,10 +13,7 @@ module.exports = {
         beat: 'beat 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       colors: {
-        gray: {
-          ...colors.gray,
-          1000: '#10101B',
-        },
+        gray: colors.gray,
       },
       keyframes: {
         beat: {

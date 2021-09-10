@@ -11,6 +11,10 @@ import React, {
 } from 'react'
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
+import PreferencesContext, {
+  IPreferencesContext,
+  VisibilityMode,
+} from '../contexts/PreferencesContext'
 import DatabaseFactory from '../db/DatabaseFactory'
 import Contact from '../models/Contact'
 import Voicemail from '../models/Voicemail'
@@ -27,6 +31,7 @@ import Tooltip from './Tooltip'
 let amr: BenzAMRRecorder
 
 const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
+  const { visibilityMode } = useContext<IPreferencesContext>(PreferencesContext)
   const { sql, backupFolder } = useContext<IBackupContext>(BackupContext)
   const contacts = useContext<ContactEntries | null>(ContactsContext)
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -234,7 +239,13 @@ const Voicemails = forwardRef<HTMLButtonElement>(({}, ref) => {
                       </div>
 
                       <div>
-                        <span className="block font-semibold">
+                        <span
+                          className={clsx(
+                            'block font-semibold',
+                            visibilityMode === VisibilityMode.Hidden &&
+                              'filter blur-sm'
+                          )}
+                        >
                           {voicemail.contact instanceof Contact
                             ? voicemail.contact.getFullName()
                             : voicemail.contact}

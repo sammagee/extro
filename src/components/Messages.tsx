@@ -4,6 +4,10 @@ import uniqueId from 'lodash/uniqueId'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
+import PreferencesContext, {
+  IPreferencesContext,
+  VisibilityMode,
+} from '../contexts/PreferencesContext'
 import DatabaseFactory from '../db/DatabaseFactory'
 import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
@@ -19,6 +23,7 @@ interface MessagesProps {
 }
 
 const Messages = ({ conversation }: MessagesProps) => {
+  const { visibilityMode } = useContext<IPreferencesContext>(PreferencesContext)
   const { sql, backupFolder } = useContext<IBackupContext>(BackupContext)
   const contacts = useContext<ContactEntries | null>(ContactsContext)
   const [loading, setLoading] = useState<boolean>(false)
@@ -198,9 +203,15 @@ const Messages = ({ conversation }: MessagesProps) => {
                     !message.isFromSameContact(messages[index - 1])) ||
                     (message.isFirst(index) && !message.fromMe)) && (
                     <span className="ml-3 text-xs text-gray-400">
-                      {message.contact instanceof Contact
-                        ? message.contact.getFullName()
-                        : message.contact}
+                      <span
+                        className={clsx(
+                          visibilityMode === VisibilityMode.Hidden && 'blur-sm'
+                        )}
+                      >
+                        {message.contact instanceof Contact
+                          ? message.contact.getFullName()
+                          : message.contact}
+                      </span>
                       <span className="text-gray-500">
                         {' '}
                         &middot;{' '}
@@ -237,7 +248,14 @@ const Messages = ({ conversation }: MessagesProps) => {
                       message.fromMe && 'ml-auto'
                     )}
                   >
-                    <p className="text-left break-word">{message.text}</p>
+                    <p
+                      className={clsx(
+                        'text-left break-word',
+                        visibilityMode === VisibilityMode.Hidden && 'blur-sm'
+                      )}
+                    >
+                      {message.text}
+                    </p>
                   </div>
                 </div>
               </div>

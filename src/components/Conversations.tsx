@@ -9,6 +9,10 @@ import React, {
 } from 'react'
 import BackupContext, { IBackupContext } from '../contexts/BackupContext'
 import ContactsContext from '../contexts/ContactsContext'
+import PreferencesContext, {
+  IPreferencesContext,
+  VisibilityMode,
+} from '../contexts/PreferencesContext'
 import DatabaseFactory from '../db/DatabaseFactory'
 import Contact from '../models/Contact'
 import Conversation from '../models/Conversation'
@@ -22,6 +26,7 @@ import Modal from './Modal'
 import Tooltip from './Tooltip'
 
 const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
+  const { visibilityMode } = useContext<IPreferencesContext>(PreferencesContext)
   const { sql, backupFolder } = useContext<IBackupContext>(BackupContext)
   const contacts = useContext(ContactsContext)
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -190,8 +195,10 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
                   placement="bottom"
                 >
                   <span
-                    className="text-gray-400"
-                    title={selectedConversation?.displayName}
+                    className={clsx(
+                      'text-gray-400',
+                      visibilityMode === VisibilityMode.Hidden && 'blur-sm'
+                    )}
                   >
                     {selectedConversation?.displayName}
                   </span>
@@ -216,7 +223,11 @@ const Conversations = forwardRef<HTMLButtonElement>(({}, ref) => {
                   key={uniqueId('conversation')}
                   onClick={() => selectConversation(conversation)}
                 >
-                  <div>
+                  <div
+                    className={clsx(
+                      visibilityMode === VisibilityMode.Hidden && 'blur-sm'
+                    )}
+                  >
                     <span className="font-semibold line-clamp-1">
                       {conversation.displayName}
                     </span>
