@@ -38,7 +38,7 @@ const NotSupported = () => {
             href="//www.google.com/chrome/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-5 py-4 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
+            className="flex items-center justify-between px-5 py-4 space-x-3 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
           >
             <div className="flex items-center space-x-3">
               <ChromeIcon className="opacity-75 w-7 h-7 filter grayscale" />
@@ -69,7 +69,7 @@ const NotSupported = () => {
             href="//www.microsoft.com/edge"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-5 py-4 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
+            className="flex items-center justify-between px-5 py-4 space-x-3 text-lg font-semibold transition-colors ease-in-out rounded-full hover:bg-gray-800 focus:bg-gray-800 focus:outline-none duration-250"
           >
             <div className="flex items-center space-x-3">
               <EdgeIcon className="opacity-75 w-7 h-7 filter grayscale" />
