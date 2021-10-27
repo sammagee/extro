@@ -1,19 +1,16 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  mode: 'jit',
-  purge: {
-    mode: 'all',
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  },
-  darkMode: false, // or 'media' or 'class'
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'media',
   theme: {
     extend: {
       animation: {
         beat: 'beat 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       colors: {
-        gray: colors.gray,
+        gray: colors.zinc,
+        green: colors.emerald,
         brand: colors.emerald,
       },
       keyframes: {

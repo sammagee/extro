@@ -49,6 +49,8 @@ class ConversationRepository implements Repository<Conversation[]> {
     `
     const conversationsTemp = this.db.exec(query)?.[0]?.values
 
+    if (!conversationsTemp) return []
+
     this.conversations = await Promise.all(
       conversationsTemp.map(async (conversation) => {
         const handles = (conversation[1] as string).split(',')
