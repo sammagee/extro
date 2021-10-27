@@ -29,7 +29,7 @@ class VoicemailRepository implements Repository<Voicemail[]> {
     `
     const voicemailsTemp = this.db.exec(query)?.[0]?.values
 
-    if (!voicemailsTemp) return this.voicemails
+    if (!voicemailsTemp) return []
 
     this.voicemails = await Promise.all(
       voicemailsTemp.map(async (voicemail) => {
